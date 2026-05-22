@@ -1,0 +1,9 @@
+{
+  "name": "observeiq",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  }
+}
