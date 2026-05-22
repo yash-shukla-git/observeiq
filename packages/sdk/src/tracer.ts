@@ -13,7 +13,8 @@ export class Tracer {
 
     constructor(config: TracerConfig) {
         this.serviceName = config.serviceName;
-        this.collectorUrl = config.collectorUrl;
+        // Remove trailing slash to ensure clean URL joining
+        this.collectorUrl = config.collectorUrl.replace(/\/$/, '');
     }
 
     async trace<T>(
@@ -26,7 +27,7 @@ export class Tracer {
         const spanId = uuidv4();
         const startTime = Date.now();
 
-        return storage.run({ traceId, spanId }, async () => {
+        return storage.run({traceId, spanId}, async () => {
             let status: 'ok' | 'error' = 'ok';
             let errorMessage: string | undefined;
             let result: T;
@@ -48,7 +49,7 @@ export class Tracer {
                     duration: Date.now() - startTime,
                     status,
                     tags,
-                    ...(errorMessage && { error: errorMessage }),
+                    ...(errorMessage && {error: errorMessage}),
                 };
 
                 // Fire and forget — don't let export failure break the caller
@@ -62,10 +63,20 @@ export class Tracer {
     }
 
     private async exportSpan(span: Span): Promise<void> {
-        await fetch(this.collectorUrl + '/ingest', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(span),
-        });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        try {
+            const response = await fetch(this.collectorUrl + '/ingest', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(span),
+                signal: controller.signal,
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+        } finally {
+            clearTimeout(timeoutId);
+        }
     }
 }
