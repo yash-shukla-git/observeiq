@@ -1,0 +1,21 @@
+{
+  "name": "@yashshukla/observeiq-node",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.41",
+    "@types/uuid": "^11.0.0",
+    "typescript": "^5.0.0"
+  }
+}
