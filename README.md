@@ -51,7 +51,6 @@ observeiq/
 ├── packages/
 │   └── sdk/             npm package — @yashshukla/observeiq-node
 ├── scripts/
-│   └── mock-emitter.ts  Posts fake spans to test the pipeline
 └── docker-compose.yml   PostgreSQL + RabbitMQ
 ```
 
@@ -59,14 +58,14 @@ observeiq/
 
 ## Stack
 
-| Layer | Tech |
-|---|---|
+| Layer | Tech                          |
+|---|-------------------------------|
 | SDK | TypeScript, AsyncLocalStorage |
-| Collector | Node.js, Express |
-| Queue | RabbitMQ |
-| Storage | PostgreSQL |
-| Dashboard | React (Week 2) |
-| AI layer | OpenAI instrumentation (Week 3) |
+| Collector | Node.js, Express              |
+| Queue | RabbitMQ                      |
+| Storage | PostgreSQL                    |
+| Dashboard | React                         |
+| AI layer | OpenAI instrumentation        |
 
 ---
 

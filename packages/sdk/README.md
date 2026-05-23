@@ -146,14 +146,7 @@ cd packages/sdk
 npm run build
 ```
 
-5. Run the mock emitter to test the full pipeline
-
-```bash
-cd scripts
-ts-node mock-emitter.ts
-```
-
-6. Make your changes in `packages/sdk/src/`, rebuild, and verify spans appear in PostgreSQL.
+5. Make your changes in `packages/sdk/src/`, rebuild, and verify spans appear in PostgreSQL.
 
 Open a PR against `main`. Keep changes focused — one concern per PR.
 
