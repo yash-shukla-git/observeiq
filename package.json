@@ -1,4 +1,11 @@
 {
+  "name": "observeiq",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
   "devDependencies": {
     "@types/node": "^25.9.1",
     "ts-node": "^10.9.2",
