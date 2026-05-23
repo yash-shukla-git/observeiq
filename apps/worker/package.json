@@ -1,0 +1,22 @@
+{
+  "name": "@observeiq/worker",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "migrate": "psql $DATABASE_URL -f migrations/001_create_spans_table.sql"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.9",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.8",
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
