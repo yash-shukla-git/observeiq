@@ -6,7 +6,8 @@ const context_1 = require("./context");
 class Tracer {
     constructor(config) {
         this.serviceName = config.serviceName;
-        this.collectorUrl = config.collectorUrl;
+        // Remove trailing slash to ensure clean URL joining
+        this.collectorUrl = config.collectorUrl.replace(/\/$/, '');
     }
     async trace(operationName, fn, tags = {}) {
         const parent = (0, context_1.getCurrentContext)();
@@ -45,11 +46,22 @@ class Tracer {
         });
     }
     async exportSpan(span) {
-        await fetch(this.collectorUrl + '/ingest', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(span),
-        });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        try {
+            const response = await fetch(this.collectorUrl + '/ingest', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(span),
+                signal: controller.signal,
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+        }
+        finally {
+            clearTimeout(timeoutId);
+        }
     }
 }
 exports.Tracer = Tracer;
