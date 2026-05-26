@@ -109,7 +109,7 @@ observeiq/
 ├── apps/
 │   ├── collector/     Express server — receives spans, pushes to RabbitMQ
 │   ├── worker/        Reads queue, writes to PostgreSQL
-│   └── dashboard/     Waterfall UI (Week 2)
+│   └── dashboard/     Waterfall UI
 ├── packages/
 │   └── sdk/           This package
 └── docker-compose.yml PostgreSQL + RabbitMQ

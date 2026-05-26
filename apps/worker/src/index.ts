@@ -1,9 +1,10 @@
+import 'dotenv/config';
 import amqp, {ChannelModel} from 'amqplib';
 import { Pool } from 'pg';
 import { Span } from './types';
 
-const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://observeiq:observeiq@localhost:5672';
-const DATABASE_URL = process.env.DATABASE_URL || 'postgres://observeiq:observeiq@localhost:5432/observeiq';
+const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://missing-env';
+const DATABASE_URL = process.env.DATABASE_URL || 'postgres://missing-env';
 const QUEUE_NAME = 'spans';
 const PREFETCH = 10; // process up to 10 messages at once
 

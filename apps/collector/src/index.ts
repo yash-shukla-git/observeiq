@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express, { Request, Response } from 'express';
 import amqp from 'amqplib';
 import { Span } from './types';
@@ -6,8 +7,8 @@ const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 4318;
-const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://observeiq:observeiq@localhost:5672';
-const QUEUE_NAME = 'spans';
+const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://missing-env';
+const QUEUE_NAME = process.env.QUEUE_NAME || 'spans';
 
 let channel: amqp.Channel;
 
