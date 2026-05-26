@@ -5,16 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5ea54c6d-d561-4d71-992c-9cf4a83b35d1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/apps/collector/src/lib/buildTree.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/collector/src/lib/db.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/collector/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/collector/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/worker/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/worker/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/sdk/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sdk/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/sdk/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sdk/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/collector/src/lib/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/collector/src/lib/db.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,6 +84,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/apps/collector/src/lib" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/packages/sdk" />
     </key>
@@ -118,7 +112,7 @@
       <option name="presentableId" value="Default" />
       <updated>1779425688150</updated>
       <workItem from="1779425689364" duration="40041000" />
-      <workItem from="1779773707398" duration="4507000" />
+      <workItem from="1779773707398" duration="7966000" />
     </task>
     <servers />
   </component>

@@ -1,7 +1,12 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+
+import { pool } from './lib/db';
 import express, { Request, Response } from 'express';
 import amqp from 'amqplib';
 import { Span } from './types';
+import {buildTree} from "./lib/buildTree";
 
 const app = express();
 app.use(express.json());
@@ -63,8 +68,60 @@ app.post('/ingest', (req: Request, res: Response) => {
     res.status(202).json({ queued: spans.length });
 });
 
+app.get('/health/db', async (_req: Request, res: Response) => {
+    try {
+        await pool.query('SELECT 1');
+        res.json({ status: 'ok' });
+    } catch (err) {
+        res.status(503).json({ status: 'error', detail: 'Postgres unreachable' });
+    }
+});
+
 app.get('/health', (_req: Request, res: Response) => {
     res.json({ status: 'ok' });
+});
+
+app.get('/traces', async (req: Request, res: Response) => {
+    try {
+        const result = await pool.query(`
+          SELECT
+            trace_id,
+            MIN(service_name)             AS service_name,
+            MIN(start_time)               AS start_time,
+            SUM(duration)                 AS total_duration_ms,
+            COUNT(*)                      AS span_count,
+            BOOL_OR(status = 'error')     AS has_error
+          FROM spans
+          GROUP BY trace_id
+          ORDER BY MIN(start_time) DESC
+          LIMIT 50
+        `);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('GET /traces error:', err);
+        res.status(503).json({ error: 'DB unavailable' });
+    }
+});
+
+app.get('/traces/:traceId', async (req: Request, res: Response) => {
+    try {
+        const { traceId } = req.params;
+        const result = await pool.query(
+            `SELECT * FROM spans WHERE trace_id = $1 ORDER BY start_time ASC`,
+            [traceId]
+        );
+
+        if (result.rows.length === 0) {
+            res.status(404).json({ error: 'Trace not found' });
+            return;
+        }
+
+        const tree = buildTree(result.rows);
+        res.json(tree);
+    } catch (err) {
+        console.error('GET /traces/:traceId error:', err);
+        res.status(503).json({ error: 'DB unavailable' });
+    }
 });
 
 async function start() {
