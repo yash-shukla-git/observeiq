@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { SpanNode } from '@/lib/api';
+import SpanDetail from './SpanDetail';
 
 interface FlatSpan {
     node: SpanNode;
@@ -38,6 +40,7 @@ interface Props {
 }
 
 export default function WaterfallChart({ tree }: Props) {
+    const [selected, setSelected] = useState<SpanNode | null>(null);
     const flat = flatten(tree);
 
     if (flat.length === 0) return <p>No spans found.</p>;
@@ -52,10 +55,14 @@ export default function WaterfallChart({ tree }: Props) {
                 const offsetPct = ((Number(node.start_time) - traceStart) / totalDuration) * 100;
                 const widthPct = Math.max((Number(node.duration) / totalDuration) * 100, 1);
                 const color = getColor(node.service_name, node.status === 'error');
+                const isSelected = selected?.span_id === node.span_id;
 
                 return (
-                    <div key={node.span_id} className="flex items-center mb-1 gap-2">
-                        {/* Label */}
+                    <div
+                        key={node.span_id}
+                        className={`flex items-center mb-1 gap-2 rounded cursor-pointer ${isSelected ? 'bg-muted' : 'hover:bg-muted/50'}`}
+                        onClick={() => setSelected(isSelected ? null : node)}
+                    >
                         <div
                             className="truncate shrink-0 text-right pr-2"
                             style={{ width: '260px', paddingLeft: `${depth * 16}px` }}
@@ -64,7 +71,6 @@ export default function WaterfallChart({ tree }: Props) {
                             <span>{node.operation_name}</span>
                         </div>
 
-                        {/* Bar track */}
                         <div className="relative flex-1 h-5 bg-muted rounded">
                             <div
                                 className="absolute h-full rounded"
@@ -76,13 +82,14 @@ export default function WaterfallChart({ tree }: Props) {
                             />
                         </div>
 
-                        {/* Duration */}
                         <div className="shrink-0 w-16 text-right text-muted-foreground">
                             {node.duration}ms
                         </div>
                     </div>
                 );
             })}
+
+            {selected && <SpanDetail span={selected} onClose={() => setSelected(null)} />}
         </div>
     );
 }
