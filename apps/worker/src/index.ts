@@ -1,4 +1,5 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({ path: '../../.env' });
 import amqp, {ChannelModel} from 'amqplib';
 import { Pool } from 'pg';
 import { Span } from './types';
@@ -9,6 +10,9 @@ const QUEUE_NAME = 'spans';
 const PREFETCH = 10; // process up to 10 messages at once
 
 const pool = new Pool({ connectionString: DATABASE_URL });
+
+console.log("RABBITMQ_URL: ", RABBITMQ_URL)
+console.log("DATABASE_URL: ", DATABASE_URL)
 
 async function insertSpan(span: Span): Promise<void> {
     const query = `

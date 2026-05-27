@@ -8,7 +8,7 @@
  *   COLLECTOR_URL=http://localhost:4318 ts-node scripts/mock-emitter.ts
  */
 
-const COLLECTOR_URL = process.env.COLLECTOR_URL || 'http://localhost:4318';
+const COLLECTOR_URL = process.env.COLLECTOR_URL;
 
 function uuid(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
