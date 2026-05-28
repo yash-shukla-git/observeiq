@@ -7,14 +7,16 @@ import SpanDetail from './SpanDetail';
 interface FlatSpan {
     node: SpanNode;
     depth: number;
+    isLastChild: boolean;
 }
 
 function flatten(nodes: SpanNode[], depth = 0): FlatSpan[] {
     const result: FlatSpan[] = [];
-    for (const node of nodes) {
-        result.push({ node, depth });
+    nodes.forEach((node, index) => {
+        const isLastChild = index === nodes.length - 1;
+        result.push({ node, depth, isLastChild });
         result.push(...flatten(node.children, depth + 1));
-    }
+    });
     return result;
 }
 
@@ -43,46 +45,81 @@ export default function WaterfallChart({ tree }: Props) {
     const [selected, setSelected] = useState<SpanNode | null>(null);
     const flat = flatten(tree);
 
-    if (flat.length === 0) return <p>No spans found.</p>;
+    if (flat.length === 0) return <p className="text-zinc-500 text-sm font-sans">No spans found.</p>;
 
     const traceStart = Math.min(...flat.map((f) => Number(f.node.start_time)));
     const traceEnd = Math.max(...flat.map((f) => Number(f.node.start_time) + Number(f.node.duration)));
     const totalDuration = traceEnd - traceStart || 1;
 
     return (
-        <div className="w-full font-mono text-xs">
-            {flat.map(({ node, depth }) => {
+        <div className="w-full font-mono text-sm space-y-0.5 select-none">
+            {flat.map(({ node, depth, isLastChild }) => {
                 const offsetPct = ((Number(node.start_time) - traceStart) / totalDuration) * 100;
                 const widthPct = Math.max((Number(node.duration) / totalDuration) * 100, 1);
-                const color = getColor(node.service_name, node.status === 'error');
+                const isError = node.status === 'error';
+                const color = getColor(node.service_name, isError);
                 const isSelected = selected?.span_id === node.span_id;
 
                 return (
                     <div
                         key={node.span_id}
-                        className={`flex items-center mb-1 gap-2 rounded cursor-pointer ${isSelected ? 'bg-muted' : 'hover:bg-muted/50'}`}
+                        className={`flex items-center h-9 px-3 rounded-lg cursor-pointer border border-transparent transition-all duration-150 ${
+                            isSelected
+                                ? 'bg-zinc-900 border-white/5 shadow-inner'
+                                : 'hover:bg-zinc-900/40'
+                        }`}
                         onClick={() => setSelected(isSelected ? null : node)}
                     >
+                        {/* Service / Operation Column with Depth Tree Lines */}
                         <div
-                            className="truncate shrink-0 text-right pr-2"
-                            style={{ width: '260px', paddingLeft: `${depth * 16}px` }}
+                            className="truncate shrink-0 pr-4 flex items-center relative h-full text-left"
+                            style={{ width: '340px', paddingLeft: `${depth * 20}px` }}
                         >
-                            <span className="text-muted-foreground">{node.service_name} / </span>
-                            <span>{node.operation_name}</span>
+                            {depth > 0 && (
+                                <div
+                                    className="absolute left-0 top-0 bottom-0 border-l border-white/10"
+                                    style={{
+                                        left: `${(depth - 1) * 20 + 8}px`,
+                                        height: isLastChild ? '50%' : '100%'
+                                    }}
+                                />
+                            )}
+                            {depth > 0 && (
+                                <div
+                                    className="absolute border-b border-white/10"
+                                    style={{
+                                        left: `${(depth - 1) * 20 + 8}px`,
+                                        width: '12px',
+                                        top: '50%'
+                                    }}
+                                />
+                            )}
+                            <div className="truncate tracking-tight">
+                                <span className="font-semibold text-zinc-100">{node.service_name}</span>
+                                <span className="text-zinc-500 font-normal"> / {node.operation_name}</span>
+                            </div>
                         </div>
 
-                        <div className="relative flex-1 h-5 bg-muted rounded">
+                        {/* Timeline Window - Floating Bars with Zero Track Background */}
+                        <div className="relative flex-1 h-full flex items-center mx-4">
                             <div
-                                className="absolute h-full rounded"
+                                className={`absolute h-3.5 rounded-full transition-all duration-200 relative group ${
+                                    isError ? 'shadow-[0_0_12px_rgba(239,68,68,0.25)]' : ''
+                                }`}
                                 style={{
                                     left: `${offsetPct}%`,
                                     width: `${widthPct}%`,
                                     backgroundColor: color,
                                 }}
-                            />
+                            >
+                                {isError && (
+                                    <span className="absolute inset-0 rounded-full bg-white/20 animate-pulse" />
+                                )}
+                            </div>
                         </div>
 
-                        <div className="shrink-0 w-16 text-right text-muted-foreground">
+                        {/* Right Aligned Duration Tag */}
+                        <div className="shrink-0 w-20 text-right text-sm font-semibold text-zinc-400 tabular-nums">
                             {node.duration}ms
                         </div>
                     </div>
