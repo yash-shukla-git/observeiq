@@ -5,12 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5ea54c6d-d561-4d71-992c-9cf4a83b35d1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/apps/demo-service/src/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/demo-app/inventory-service/src/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/demo-app/payment-service/src/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/worker/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/worker/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/demo-service/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/demo-app/order-service/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/demo-service/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/demo-app/order-service/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/demo-service/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/demo-app/order-service/tsconfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/sdk/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sdk/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/mock-emitter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/mock-emitter.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sdk/dist/tracer.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sdk/dist/tracer.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sdk/dist/tracer.d.ts.map" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sdk/dist/tracer.d.ts.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sdk/dist/tracer.js" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sdk/dist/tracer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sdk/dist/tracer.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sdk/dist/tracer.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sdk/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sdk/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sdk/src/tracer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sdk/src/tracer.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,6 +95,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/apps/demo-app" />
       <recent name="$PROJECT_DIR$/apps/collector/src/lib" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/packages/sdk" />
@@ -115,7 +124,7 @@
       <option name="presentableId" value="Default" />
       <updated>1779425688150</updated>
       <workItem from="1779425689364" duration="40041000" />
-      <workItem from="1779773707398" duration="18548000" />
+      <workItem from="1779773707398" duration="25010000" />
     </task>
     <servers />
   </component>

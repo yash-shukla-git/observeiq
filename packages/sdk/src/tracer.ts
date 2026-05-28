@@ -13,16 +13,16 @@ export class Tracer {
 
     constructor(config: TracerConfig) {
         this.serviceName = config.serviceName;
-        // Remove trailing slash to ensure clean URL joining
         this.collectorUrl = config.collectorUrl.replace(/\/$/, '');
     }
 
     async trace<T>(
         operationName: string,
         fn: () => Promise<T>,
-        tags: Record<string, string | number | boolean> = {}
+        tags: Record<string, string | number | boolean> = {},
+        incomingContext?: { traceId: string; spanId: string } | null
     ): Promise<T> {
-        const parent = getCurrentContext();
+        const parent = incomingContext ?? getCurrentContext();
         const traceId = parent?.traceId ?? uuidv4();
         const spanId = uuidv4();
         const startTime = Date.now();
@@ -60,6 +60,27 @@ export class Tracer {
 
             return result!;
         });
+    }
+
+    injectHeaders(): Record<string, string> {
+        const ctx = getCurrentContext();
+        if (!ctx) return {};
+        return {
+            'x-trace-id': ctx.traceId,
+            'x-span-id': ctx.spanId,
+        };
+    }
+
+    extractContext(headers: Record<string, string | string[] | undefined>): { traceId: string; spanId: string } | null {
+        const traceId = headers['x-trace-id'];
+        const spanId = headers['x-span-id'];
+
+        if (!traceId || !spanId) return null;
+
+        return {
+            traceId: Array.isArray(traceId) ? traceId[0]! : traceId,
+            spanId: Array.isArray(spanId) ? spanId[0]! : spanId,
+        };
     }
 
     private async exportSpan(span: Span): Promise<void> {

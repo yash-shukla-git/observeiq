@@ -4,13 +4,14 @@ exports.Tracer = void 0;
 const uuid_1 = require("uuid");
 const context_1 = require("./context");
 class Tracer {
+    serviceName;
+    collectorUrl;
     constructor(config) {
         this.serviceName = config.serviceName;
-        // Remove trailing slash to ensure clean URL joining
         this.collectorUrl = config.collectorUrl.replace(/\/$/, '');
     }
-    async trace(operationName, fn, tags = {}) {
-        const parent = (0, context_1.getCurrentContext)();
+    async trace(operationName, fn, tags = {}, incomingContext) {
+        const parent = incomingContext ?? (0, context_1.getCurrentContext)();
         const traceId = parent?.traceId ?? (0, uuid_1.v4)();
         const spanId = (0, uuid_1.v4)();
         const startTime = Date.now();
@@ -44,6 +45,25 @@ class Tracer {
             }
             return result;
         });
+    }
+    injectHeaders() {
+        const ctx = (0, context_1.getCurrentContext)();
+        if (!ctx)
+            return {};
+        return {
+            'x-trace-id': ctx.traceId,
+            'x-span-id': ctx.spanId,
+        };
+    }
+    extractContext(headers) {
+        const traceId = headers['x-trace-id'];
+        const spanId = headers['x-span-id'];
+        if (!traceId || !spanId)
+            return null;
+        return {
+            traceId: Array.isArray(traceId) ? traceId[0] : traceId,
+            spanId: Array.isArray(spanId) ? spanId[0] : spanId,
+        };
     }
     async exportSpan(span) {
         const controller = new AbortController();

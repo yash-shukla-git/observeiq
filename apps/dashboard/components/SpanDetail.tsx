@@ -32,7 +32,13 @@ export default function SpanDetail({ span, onClose }: Props) {
                 <span>{span.operation_name}</span>
 
                 <span className="text-muted-foreground">Start Time</span>
-                <span>{new Date(Number(span.start_time)).toLocaleString()}</span>
+                <span>{new Date(Number(span.start_time)).toLocaleString('en-IN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    fractionalSecondDigits: 3,
+                    hour12: true,
+                })}</span>
 
                 <span className="text-muted-foreground">Duration</span>
                 <span>{span.duration}ms</span>

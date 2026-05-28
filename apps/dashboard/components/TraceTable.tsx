@@ -43,8 +43,13 @@ export default function TraceTable({ traces }: Props) {
                         </TableCell>
                         <TableCell>{trace.service_name}</TableCell>
                         <TableCell>
-                            {new Date(Number(trace.start_time)).toLocaleTimeString('en-US', {
-                                hour12: false,
+                            {new Date(Number(trace.start_time)).toLocaleString('en-IN', {
+                                day: '2-digit',
+                                month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: true,
                             })}
                         </TableCell>
                         <TableCell>{trace.total_duration_ms}ms</TableCell>
