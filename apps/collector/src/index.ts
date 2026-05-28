@@ -1,8 +1,6 @@
-import dotenv from 'dotenv';
-import path from 'path';
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
-
+import 'dotenv/config';
 import { pool } from './lib/db';
+import cors from 'cors';
 import express, { Request, Response } from 'express';
 import amqp from 'amqplib';
 import { Span } from './types';
@@ -10,6 +8,7 @@ import {buildTree} from "./lib/buildTree";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const PORT = process.env.PORT || 4318;
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://missing-env';

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -10,14 +11,33 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { TraceSummary } from '@/lib/api';
+import { TraceSummary, getTraces } from '@/lib/api';
 
-interface Props {
-    traces: TraceSummary[];
-}
-
-export default function TraceTable({ traces }: Props) {
+export default function TraceTable({ initialTraces }: { initialTraces: TraceSummary[] }) {
+    const [traces, setTraces] = useState<TraceSummary[]>(initialTraces);
+    const [newTraceIds, setNewTraceIds] = useState<Set<string>>(new Set());
+    const knownIds = useRef<Set<string>>(new Set(initialTraces.map((t) => t.trace_id)));
     const router = useRouter();
+
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            const fresh = await getTraces();
+            const newIds = fresh
+                .map((t) => t.trace_id)
+                .filter((id) => !knownIds.current.has(id));
+
+            if (newIds.length > 0) {
+                newIds.forEach((id) => knownIds.current.add(id));
+                setNewTraceIds(new Set(newIds));
+                setTraces(fresh);
+
+                // Remove highlight after 2 second
+                setTimeout(() => setNewTraceIds(new Set()), 2000);
+            }
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <Table>
@@ -35,7 +55,11 @@ export default function TraceTable({ traces }: Props) {
                 {traces.map((trace) => (
                     <TableRow
                         key={trace.trace_id}
-                        className="cursor-pointer hover:bg-muted"
+                        className={`cursor-pointer transition-colors duration-700 ${
+                            newTraceIds.has(trace.trace_id)
+                                ? 'bg-green-500/20'
+                                : 'hover:bg-muted'
+                        }`}
                         onClick={() => router.push(`/traces/${trace.trace_id}`)}
                     >
                         <TableCell className="font-mono text-xs">

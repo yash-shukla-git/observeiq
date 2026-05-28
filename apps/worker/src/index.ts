@@ -1,5 +1,4 @@
-import dotenv from 'dotenv';
-dotenv.config({ path: '../../.env' });
+import 'dotenv/config';
 import amqp, {ChannelModel} from 'amqplib';
 import { Pool } from 'pg';
 import { Span } from './types';
