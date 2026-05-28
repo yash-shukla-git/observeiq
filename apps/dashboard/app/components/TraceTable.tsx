@@ -7,7 +7,7 @@ import { TraceSummary, getTraces } from '@/lib/api';
 function StatusBadge({ hasError }: { hasError: boolean }) {
     if (hasError) {
         return (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/10">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/10 shadow-[0_0_12px_rgba(244,63,94,0.05)]">
                 <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
                 error
             </span>
@@ -60,9 +60,10 @@ export default function TraceTable({ initialTraces }: { initialTraces: TraceSumm
     });
 
     return (
-        <div className="space-y-6">
-            {/* Search and Dropdowns Filter Section */}
-            <div className="flex items-center justify-between gap-4">
+        <div className="space-y-6 w-full block">
+            {/* Search and Filters Controls Grid */}
+            <div className="flex items-center justify-between gap-4 w-full">
+                {/* Recessed Recessed Search Utility */}
                 <div className="relative flex-1 max-w-md group">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-zinc-500 group-focus-within:text-zinc-400 transition-colors">
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -74,7 +75,7 @@ export default function TraceTable({ initialTraces }: { initialTraces: TraceSumm
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search traces..."
-                        className="w-full rounded-lg bg-zinc-900 border border-zinc-800/60 pl-10 pr-4 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-zinc-700 focus:bg-black/30 shadow-inner transition-all duration-200"
+                        className="w-full rounded-lg bg-zinc-900/50 border border-white/[0.04] pl-10 pr-4 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none focus:border-zinc-700 focus:bg-zinc-950 shadow-inner transition-all duration-200"
                     />
                 </div>
 
@@ -83,7 +84,7 @@ export default function TraceTable({ initialTraces }: { initialTraces: TraceSumm
                         style={{ colorScheme: 'dark' }}
                         value={serviceFilter}
                         onChange={(e) => setServiceFilter(e.target.value)}
-                        className="rounded-lg bg-zinc-900 border border-zinc-800/60 px-3.5 py-2.5 text-sm text-zinc-400 outline-none cursor-pointer hover:border-zinc-700 transition-colors"
+                        className="rounded-lg bg-zinc-900/50 border border-white/[0.04] px-3.5 py-2.5 text-sm text-zinc-400 outline-none cursor-pointer hover:border-white/10 transition-colors shadow-sm"
                     >
                         {services.map((s) => (
                             <option key={s} value={s}>{s === 'all' ? 'All Services' : s}</option>
@@ -93,7 +94,7 @@ export default function TraceTable({ initialTraces }: { initialTraces: TraceSumm
                         style={{ colorScheme: 'dark' }}
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="rounded-lg bg-zinc-900 border border-zinc-800/60 px-3.5 py-2.5 text-sm text-zinc-400 outline-none cursor-pointer hover:border-zinc-700 transition-colors"
+                        className="rounded-lg bg-zinc-900/50 border border-white/[0.04] px-3.5 py-2.5 text-sm text-zinc-400 outline-none cursor-pointer hover:border-white/10 transition-colors shadow-sm"
                     >
                         <option value="all">All Status</option>
                         <option value="ok">OK</option>
@@ -102,11 +103,11 @@ export default function TraceTable({ initialTraces }: { initialTraces: TraceSumm
                 </div>
             </div>
 
-            {/* Fixed-Width Formatted Table Canvas */}
-            <div className="w-full overflow-x-auto">
+            {/* Fixed-Width Formatted Table Frame */}
+            <div className="w-full overflow-x-auto block">
                 <table className="w-full table-fixed border-collapse">
                     <thead>
-                    <tr className="border-b border-zinc-900 text-left">
+                    <tr className="border-b border-white/[0.04] text-left">
                         <th className="w-[42%] pb-3 text-[11px] font-bold text-zinc-500 uppercase tracking-widest pl-4 pr-2">Service / Trace</th>
                         <th className="w-[24%] pb-3 text-[11px] font-bold text-zinc-500 uppercase tracking-widest px-2">Started</th>
                         <th className="w-[12%] pb-3 text-[11px] font-bold text-zinc-500 uppercase tracking-widest px-2">Duration</th>
@@ -117,7 +118,7 @@ export default function TraceTable({ initialTraces }: { initialTraces: TraceSumm
                     <tbody className="before:content-[''] before:block before:h-2">
                     {filtered.length === 0 && (
                         <tr>
-                            <td colSpan={5} className="text-sm text-zinc-600 py-16 text-center border border-zinc-800 border-dashed rounded-xl bg-zinc-900/5">
+                            <td colSpan={5} className="text-sm text-zinc-600 py-16 text-center border border-white/[0.04] border-dashed rounded-xl bg-zinc-900/5">
                                 No traces match your active filters.
                             </td>
                         </tr>
@@ -126,9 +127,9 @@ export default function TraceTable({ initialTraces }: { initialTraces: TraceSumm
                         <tr
                             key={trace.trace_id}
                             onClick={() => router.push(`/traces/${trace.trace_id}`)}
-                            className={`group cursor-pointer border-y border-transparent transition-all duration-150 ${
+                            className={`group cursor-pointer border-y border-transparent transition-all duration-150 rounded-lg ${
                                 newTraceIds.has(trace.trace_id)
-                                    ? 'bg-emerald-500/5'
+                                    ? 'bg-emerald-500/5 border-l-2 border-emerald-500'
                                     : 'hover:bg-zinc-900/40'
                             }`}
                         >
