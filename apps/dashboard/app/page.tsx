@@ -1,5 +1,5 @@
 import { getTraces } from '@/lib/api';
-import TraceTable from '@/components/TraceTable';
+import TraceTable from '@/app/components/TraceTable';
 
 export default async function Home() {
     const traces = await getTraces();

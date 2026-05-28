@@ -1,5 +1,5 @@
 import { getTrace } from '@/lib/api';
-import WaterfallChart from "@/components/WaterfallChart";
+import WaterfallChart from "@/app/components/WaterfallChart";
 
 interface Props {
     params: Promise<{ traceId: string }>;

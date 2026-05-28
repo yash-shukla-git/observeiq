@@ -12,7 +12,7 @@ import {
     SidebarMenuItem,
     SidebarMenuButton,
     SidebarInset,
-} from "@/components/ui/sidebar";
+} from "@/app/components/ui/sidebar";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",

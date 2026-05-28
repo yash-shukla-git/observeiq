@@ -6,11 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="5ea54c6d-d561-4d71-992c-9cf4a83b35d1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/collector/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/apps/collector/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/collector/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/collector/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/dashboard/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/dashboard/components/SpanDetail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/components/SpanDetail.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/dashboard/components/TraceTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/components/TraceTable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/dashboard/components/WaterfallChart.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/components/WaterfallChart.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +116,7 @@
       <option name="presentableId" value="Default" />
       <updated>1779425688150</updated>
       <workItem from="1779425689364" duration="40041000" />
-      <workItem from="1779773707398" duration="27099000" />
+      <workItem from="1779773707398" duration="32106000" />
     </task>
     <servers />
   </component>
