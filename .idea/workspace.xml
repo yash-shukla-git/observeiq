@@ -5,14 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5ea54c6d-d561-4d71-992c-9cf4a83b35d1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/apps/dashboard/app/components/Header.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/components/SpanDetail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/components/SpanDetail.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/components/TraceTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/components/TraceTable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/components/WaterfallChart.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/components/WaterfallChart.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/globals.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/traces/[traceId]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/traces/[traceId]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/collector/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/collector/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/collector/src/lib/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/collector/src/lib/db.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/worker/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/worker/src/index.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +116,7 @@
       <updated>1779425688150</updated>
       <workItem from="1779425689364" duration="40041000" />
       <workItem from="1779773707398" duration="34185000" />
-      <workItem from="1780027546118" duration="1927000" />
+      <workItem from="1780027546118" duration="3806000" />
     </task>
     <servers />
   </component>

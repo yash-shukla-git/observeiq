@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import amqp, {ChannelModel} from 'amqplib';
 import { Pool } from 'pg';
+import amqp, {ChannelModel} from 'amqplib';
 import { Span } from './types';
 
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://missing-env';
@@ -8,10 +8,10 @@ const DATABASE_URL = process.env.DATABASE_URL || 'postgres://missing-env';
 const QUEUE_NAME = 'spans';
 const PREFETCH = 10; // process up to 10 messages at once
 
-const pool = new Pool({ connectionString: DATABASE_URL });
-
-console.log("RABBITMQ_URL: ", RABBITMQ_URL)
-console.log("DATABASE_URL: ", DATABASE_URL)
+export const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: true,
+});
 
 async function insertSpan(span: Span): Promise<void> {
     const query = `
