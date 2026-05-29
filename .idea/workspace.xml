@@ -5,10 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5ea54c6d-d561-4d71-992c-9cf4a83b35d1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/apps/dashboard/app/components/Header.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/components/SpanDetail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/components/SpanDetail.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/dashboard/app/components/TraceTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/components/TraceTable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/components/WaterfallChart.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/components/WaterfallChart.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/globals.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/dashboard/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/traces/[traceId]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/traces/[traceId]/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,7 +20,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="33" />
+    <option name="cachedIndexableFilesCount" value="85" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -59,30 +63,30 @@
     <option name="openDirectoriesWithSingleClick" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "javascript.preferred.runtime.type.id": "node",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/Users/yashshukla/Web Dev/Projects/observeiq",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "terminal",
-    "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "/Users/yashshukla/Web Dev/Projects/observeiq/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/yashshukla/Web Dev/Projects/observeiq&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/yashshukla/Web Dev/Projects/observeiq/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/apps/dashboard/app" />
@@ -115,7 +119,8 @@
       <option name="presentableId" value="Default" />
       <updated>1779425688150</updated>
       <workItem from="1779425689364" duration="40041000" />
-      <workItem from="1779773707398" duration="33384000" />
+      <workItem from="1779773707398" duration="34185000" />
+      <workItem from="1780027546118" duration="1927000" />
     </task>
     <servers />
   </component>
