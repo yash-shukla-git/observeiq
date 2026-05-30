@@ -26,6 +26,24 @@ async function connectRabbitMQ(): Promise<void> {
     channel = await connection.createChannel();
     await channel.assertQueue(QUEUE_NAME, { durable: true });
     console.log(`[collector] Connected to RabbitMQ, queue: ${QUEUE_NAME}`);
+
+    // Recreate channel if it closes
+    channel.on('close', async () => {
+        console.warn('[collector] Channel closed, reconnecting...');
+        try {
+            channel = await connection.createChannel();
+            await channel.assertQueue(QUEUE_NAME, { durable: true });
+            console.log('[collector] Channel recreated');
+        } catch (err) {
+            console.error('[collector] Failed to recreate channel:', err);
+        }
+    });
+
+    // Reconnect if connection drops
+    connection.on('close', async () => {
+        console.warn('[collector] Connection closed, reconnecting in 3s...');
+        setTimeout(connectRabbitMQ, 3000);
+    });
 }
 
 function validateSpan(body: unknown): body is Span {

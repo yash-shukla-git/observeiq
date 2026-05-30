@@ -14,8 +14,9 @@ function StatusBadge({ hasError }: { hasError: boolean }) {
         );
     }
     return (
-        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-950/30 text-emerald-500 border border-emerald-900/30 text-[11px] font-medium tracking-wide uppercase">
-            <span className="w-1 h-1 rounded-full bg-emerald-500 shrink-0" />
+        // OK badge
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-teal-950/40 text-teal-400 border border-teal-900/30 text-[11px] font-medium tracking-wide uppercase">
+            <span className="w-1 h-1 rounded-full bg-teal-400 shrink-0" />
             ok
         </span>
     );
