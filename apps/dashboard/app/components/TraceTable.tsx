@@ -109,11 +109,11 @@ export default function TraceTable({ initialTraces }: { initialTraces: TraceSumm
                 <table className="w-full table-fixed border-collapse">
                     <thead>
                     <tr className="border-b border-zinc-800/60 text-left bg-[#1c1c1f]">
-                        <th className="w-[38%] py-2.5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest pl-4 pr-2">Service / Trace</th>
-                        <th className="w-[20%] py-2.5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-2">Started</th>
-                        <th className="w-[24%] py-2.5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-2">Latency</th>
-                        <th className="w-[8%] py-2.5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-2">Spans</th>
-                        <th className="w-[10%] py-2.5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-2 text-right pr-4">Status</th>
+                        <th className="w-[32%] py-2.5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest pl-4 pr-2">Service / Trace</th>
+                        <th className="w-[18%] py-2.5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-2">Started</th>
+                        <th className="w-[22%] py-2.5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-2">Latency</th>
+                        <th className="w-[16%] py-2.5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-20">Spans</th>
+                        <th className="w-[12%] py-2.5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-2 text-right pr-4">Status</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-800/40">
@@ -167,7 +167,7 @@ export default function TraceTable({ initialTraces }: { initialTraces: TraceSumm
                                             </span>
                                     </div>
                                 </td>
-                                <td className="py-3 px-2 text-xs text-zinc-500 font-mono tabular-nums">
+                                <td className="py-3 px-23 text-xs text-zinc-500 font-mono tabular-nums">
                                     {trace.span_count}
                                 </td>
                                 <td className="py-3 px-2 text-right pr-4">

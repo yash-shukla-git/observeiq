@@ -5,19 +5,34 @@ services:
       POSTGRES_USER: observeiq
       POSTGRES_PASSWORD: observeiq
       POSTGRES_DB: observeiq
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: always
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    environment:
-      RABBITMQ_DEFAULT_USER: observeiq
-      RABBITMQ_DEFAULT_PASS: observeiq
+  collector:
+    build:
+      context: .
+      dockerfile: apps/collector/Dockerfile
     ports:
-      - "5672:5672"    # AMQP
-      - "15672:15672"  # Management UI
+      - "4318:4318"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      QUEUE_NAME: spans
+    depends_on:
+      - postgres
+    restart: always
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      RABBITMQ_URL: ${RABBITMQ_URL}
+    depends_on:
+      - postgres
+    restart: always
 
 volumes:
   postgres_data:

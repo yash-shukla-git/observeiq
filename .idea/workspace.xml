@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="5ea54c6d-d561-4d71-992c-9cf4a83b35d1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/collector/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/collector/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/components/TraceTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/components/TraceTable.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,7 +14,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="85" />
+    <option name="cachedIndexableFilesCount" value="86" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -114,7 +114,8 @@
       <updated>1779425688150</updated>
       <workItem from="1779425689364" duration="40041000" />
       <workItem from="1779773707398" duration="34185000" />
-      <workItem from="1780027546118" duration="11269000" />
+      <workItem from="1780027546118" duration="14538000" />
+      <workItem from="1780225262521" duration="597000" />
     </task>
     <servers />
   </component>
