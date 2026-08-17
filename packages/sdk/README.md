@@ -1,4 +1,4 @@
-# @yashshukla/observeiq-node
+#
 
 Distributed tracing SDK for Node.js. Drop it into any service to trace requests end-to-end and send spans to an ObserveIQ collector.
 

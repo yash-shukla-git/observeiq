@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5ea54c6d-d561-4d71-992c-9cf4a83b35d1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/observeiq.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/observeiq.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/dashboard/app/components/TraceTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/dashboard/app/components/TraceTable.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +115,8 @@
       <workItem from="1779425689364" duration="40041000" />
       <workItem from="1779773707398" duration="34185000" />
       <workItem from="1780027546118" duration="14538000" />
-      <workItem from="1780225262521" duration="597000" />
+      <workItem from="1780225262521" duration="14625000" />
+      <workItem from="1785908333043" duration="6772000" />
     </task>
     <servers />
   </component>
