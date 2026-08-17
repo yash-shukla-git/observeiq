@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const PORT = process.env.PORT || 4318;
+const PORT = process.env.COLLECTOR_PORT || 4318;
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://missing-env';
 const QUEUE_NAME = process.env.QUEUE_NAME || 'spans';
 
