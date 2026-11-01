@@ -5,15 +5,18 @@ import { Span } from './types';
 export interface TracerConfig {
     serviceName: string;
     collectorUrl: string;
+    apiKey?: string | undefined; // sent as x-api-key when the collector has INGEST_API_KEY set
 }
 
 export class Tracer {
     private serviceName: string;
     private collectorUrl: string;
+    private apiKey: string | undefined;
 
     constructor(config: TracerConfig) {
         this.serviceName = config.serviceName;
         this.collectorUrl = config.collectorUrl.replace(/\/$/, '');
+        this.apiKey = config.apiKey;
     }
 
     async trace<T>(
@@ -89,7 +92,10 @@ export class Tracer {
         try {
             const response = await fetch(this.collectorUrl + '/ingest', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(this.apiKey && {'x-api-key': this.apiKey}),
+                },
                 body: JSON.stringify(span),
                 signal: controller.signal,
             });
