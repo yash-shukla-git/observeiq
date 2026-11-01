@@ -1,3 +1,4 @@
+# Local infrastructure only. Run the apps with npm scripts (see README).
 services:
   postgres:
     image: postgres:15
@@ -5,34 +6,26 @@ services:
       POSTGRES_USER: observeiq
       POSTGRES_PASSWORD: observeiq
       POSTGRES_DB: observeiq
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U observeiq"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
-  collector:
-    build:
-      context: .
-      dockerfile: apps/collector/Dockerfile
+  rabbitmq:
+    image: rabbitmq:3-management
     ports:
-      - "4318:4318"
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      RABBITMQ_URL: ${RABBITMQ_URL}
-      QUEUE_NAME: spans
-    depends_on:
-      - postgres
-    restart: always
-
-  worker:
-    build:
-      context: .
-      dockerfile: apps/worker/Dockerfile
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      RABBITMQ_URL: ${RABBITMQ_URL}
-    depends_on:
-      - postgres
-    restart: always
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
 volumes:
   postgres_data:

@@ -1,0 +1,28 @@
+# Production stack: collector and worker only.
+# Postgres (Neon) and RabbitMQ (CloudAMQP) are managed services, so their URLs come from .env.
+# Run with: docker compose -f docker-compose.prod.yml up -d --build
+services:
+  collector:
+    build:
+      context: .
+      dockerfile: apps/collector/Dockerfile
+    ports:
+      - "4318:4318"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_SSL: ${DATABASE_SSL:-true}
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      QUEUE_NAME: ${QUEUE_NAME:-spans}
+      COLLECTOR_PORT: 4318
+    restart: always
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker/Dockerfile
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_SSL: ${DATABASE_SSL:-true}
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      QUEUE_NAME: ${QUEUE_NAME:-spans}
+    restart: always

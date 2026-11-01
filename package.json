@@ -3,6 +3,7 @@
   "private": true,
   "workspaces": [
     "apps/*",
+    "apps/demo-app/*",
     "packages/*"
   ],
   "scripts": {
@@ -12,20 +13,19 @@
     "inventory": "tsx apps/demo-app/inventory-service/src/index.ts",
     "order": "tsx apps/demo-app/order-service/src/index.ts",
     "collector": "tsx apps/collector/src/index.ts",
-    "worker": "tsx apps/worker/src/index.ts"
+    "worker": "tsx apps/worker/src/index.ts",
+    "migrate": "tsx scripts/migrate.ts",
+    "build:sdk": "npm run build --workspace=@yashshukla/observeiq-node"
   },
   "type": "module",
   "devDependencies": {
-    "@types/node": "^25.9.1",
+    "@types/node": "^24.0.0",
     "@types/pg": "^8.20.0",
-    "ts-node": "^10.9.2",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "amqplib": "^2.0.1",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1",
     "pg": "^8.21.0"
   },
   "version": "0.0.1"
