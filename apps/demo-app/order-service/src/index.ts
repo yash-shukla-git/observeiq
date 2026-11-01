@@ -17,33 +17,43 @@ app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 app.post('/order', async (req, res) => {
     const incomingCtx = tracer.extractContext(req.headers as Record<string, string>);
 
-    await tracer.trace('POST /order', async () => {
+    // send {"sku": "SKU-999"} to get a failing order for testing
+    const sku = typeof req.body?.sku === 'string' ? req.body.sku : 'SKU-001';
 
-        await tracer.trace('checkInventory', async () => {
-            await fetch(`${INVENTORY_URL}/check`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...tracer.injectHeaders(),
-                },
-                body: JSON.stringify({ sku: 'SKU-001', quantity: 2 }),
-            });
-        }, { 'inventory.sku': 'SKU-001' });
+    try {
+        await tracer.trace('POST /order', async () => {
 
-        await tracer.trace('processPayment', async () => {
-            await fetch(`${PAYMENT_URL}/charge`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...tracer.injectHeaders(),
-                },
-                body: JSON.stringify({ amount: 99.99, currency: 'USD' }),
-            });
-        }, { 'payment.amount': 99.99 });
+            await tracer.trace('checkInventory', async () => {
+                const inventoryRes = await fetch(`${INVENTORY_URL}/check`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...tracer.injectHeaders(),
+                    },
+                    body: JSON.stringify({ sku, quantity: 2 }),
+                });
+                if (!inventoryRes.ok) {
+                    throw new Error(`inventory check failed with status ${inventoryRes.status}`);
+                }
+            }, { 'inventory.sku': sku });
 
-    }, {}, incomingCtx);
+            await tracer.trace('processPayment', async () => {
+                await fetch(`${PAYMENT_URL}/charge`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...tracer.injectHeaders(),
+                    },
+                    body: JSON.stringify({ amount: 99.99, currency: 'USD' }),
+                });
+            }, { 'payment.amount': 99.99 });
 
-    res.json({ success: true });
+        }, {}, incomingCtx);
+
+        res.json({ success: true });
+    } catch (err) {
+        res.status(502).json({ success: false, error: err instanceof Error ? err.message : 'order failed' });
+    }
 });
 
 app.listen(PORT, () => console.log(`[order-service] Listening on port ${PORT}`));

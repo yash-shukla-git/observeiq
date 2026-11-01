@@ -15,14 +15,19 @@ app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 app.post('/check', async (req, res) => {
     const incomingCtx = tracer.extractContext(req.headers as Record<string, string>);
 
-    await tracer.trace('checkInventory', async () => {
-        await new Promise((r) => setTimeout(r, 40));
-        const { sku, quantity } = req.body;
-        if (sku === 'SKU-999') {
-            throw new Error(`InsufficientStockError: ${sku} has 0 units remaining`);
-        }
-        res.json({ sku, quantity, available: true });
-    }, { 'inventory.sku': req.body.sku }, incomingCtx);
+    try {
+        await tracer.trace('checkInventory', async () => {
+            await new Promise((r) => setTimeout(r, 40));
+            const { sku, quantity } = req.body;
+            if (sku === 'SKU-999') {
+                throw new Error(`InsufficientStockError: ${sku} has 0 units remaining`);
+            }
+            res.json({ sku, quantity, available: true });
+        }, { 'inventory.sku': req.body.sku }, incomingCtx);
+    } catch (err) {
+        // the span is already recorded as an error, just answer with json instead of express's html page
+        res.status(409).json({ error: err instanceof Error ? err.message : 'inventory error' });
+    }
 });
 
 app.listen(PORT, () => console.log(`[inventory-service] Listening on port ${PORT}`));
