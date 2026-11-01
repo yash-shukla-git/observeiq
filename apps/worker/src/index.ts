@@ -101,7 +101,8 @@ async function start() {
                 return;
             }
             // probably the database is down, so wait a bit instead of retrying in a tight loop
-            console.error('[worker] DB insert failed, requeuing:', (err as Error).message);
+            const code = (err as { code?: string }).code;
+            console.error('[worker] DB insert failed, requeuing:', (err as Error).message || code);
             await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
             channel.nack(msg, false, true);
         }

@@ -155,6 +155,12 @@ app.get('/traces/:traceId', async (req: Request, res: Response) => {
     }
 });
 
+// body-parser errors (body too large, invalid json) would otherwise come back as an html page
+app.use((err: { status?: number }, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status && err.status < 500 ? err.status : 500;
+    res.status(status).json({ error: status === 413 ? 'Payload too large' : status === 400 ? 'Invalid request body' : 'Internal error' });
+});
+
 async function start() {
     await connectRabbitMQ();
     app.listen(PORT, () => {
