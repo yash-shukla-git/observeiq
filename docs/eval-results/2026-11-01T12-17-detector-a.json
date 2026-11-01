@@ -1,0 +1,1360 @@
+{
+  "mode": "detector",
+  "variant": "a",
+  "commit": "7437a85",
+  "command": "npm run eval -- --mode detector --variant a",
+  "params": {
+    "baselineCount": 60,
+    "faultCount": 30,
+    "tracesPerScenario": 5
+  },
+  "thresholds": {
+    "recentMs": 300000,
+    "baselineMs": 3600000,
+    "anchorMs": null,
+    "minSamples": 20,
+    "regressionRatio": 2,
+    "regressionMinIncreaseMs": 50,
+    "errorMinCount": 5,
+    "errorMinRate": 0.1,
+    "errorRateRatio": 3,
+    "repeatMin": 5,
+    "retryMin": 3,
+    "slowRatio": 2,
+    "slowNoBaselineShare": 0.5,
+    "slowNoBaselineMinMs": 300
+  },
+  "overall": {
+    "faultTraces": 25,
+    "culpritPct": 100,
+    "exactPct": 100,
+    "healthyTraces": 5,
+    "falsePositivePct": 0
+  },
+  "results": [
+    {
+      "scenario": "healthy",
+      "expected": [],
+      "summary": {
+        "scenario": "healthy",
+        "traces": 5,
+        "flaggedPct": 0,
+        "culpritPct": 0,
+        "kindPct": 0,
+        "exactPct": 0
+      },
+      "traces": [
+        {
+          "traceId": "a1c5f428-c885-4e76-9110-936e7623caf8",
+          "primary": null,
+          "findings": [],
+          "score": {
+            "flagged": false,
+            "culprit": false,
+            "kind": false,
+            "exact": false
+          }
+        },
+        {
+          "traceId": "f487a937-6093-4e6e-9990-e9fbf2a396ac",
+          "primary": null,
+          "findings": [],
+          "score": {
+            "flagged": false,
+            "culprit": false,
+            "kind": false,
+            "exact": false
+          }
+        },
+        {
+          "traceId": "e28f5487-e330-4517-a9a1-50c896e85b24",
+          "primary": null,
+          "findings": [],
+          "score": {
+            "flagged": false,
+            "culprit": false,
+            "kind": false,
+            "exact": false
+          }
+        },
+        {
+          "traceId": "c88f5793-13d6-4d28-b67e-2e63892d1f3a",
+          "primary": null,
+          "findings": [],
+          "score": {
+            "flagged": false,
+            "culprit": false,
+            "kind": false,
+            "exact": false
+          }
+        },
+        {
+          "traceId": "bc159b1d-85aa-4f39-b59b-9605bb5b9174",
+          "primary": null,
+          "findings": [],
+          "score": {
+            "flagged": false,
+            "culprit": false,
+            "kind": false,
+            "exact": false
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "slow_db",
+      "expected": [
+        {
+          "kind": "latency_regression",
+          "service": "inventory-service",
+          "operation": "db.query"
+        }
+      ],
+      "summary": {
+        "scenario": "slow_db",
+        "traces": 5,
+        "flaggedPct": 100,
+        "culpritPct": 100,
+        "kindPct": 100,
+        "exactPct": 100
+      },
+      "traces": [
+        {
+          "traceId": "183fcd30-5906-4216-8c0a-7da008b22e1b",
+          "primary": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.84
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.74
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 0.33
+            },
+            {
+              "kind": "latency_regression",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 0.31
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "af86579f-b3be-48a0-b0d9-bbe8c37c576d",
+          "primary": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.9
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.74
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 0.33
+            },
+            {
+              "kind": "latency_regression",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 0.31
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "6129a13e-4cc4-4ff0-a81d-fd49cc7912d9",
+          "primary": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.91
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.74
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 0.33
+            },
+            {
+              "kind": "latency_regression",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 0.31
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "ce4ec5b6-1d28-4ec4-8055-7373a13f49b8",
+          "primary": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.9
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.74
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 0.33
+            },
+            {
+              "kind": "latency_regression",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 0.31
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "2a5ef077-730b-465b-b7d5-c354ac9fddf3",
+          "primary": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.81
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.74
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 0.33
+            },
+            {
+              "kind": "latency_regression",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 0.31
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "n_plus_one",
+      "expected": [
+        {
+          "kind": "n_plus_one",
+          "service": "inventory-service",
+          "operation": "db.query"
+        }
+      ],
+      "summary": {
+        "scenario": "n_plus_one",
+        "traces": 5,
+        "flaggedPct": 100,
+        "culpritPct": 100,
+        "kindPct": 100,
+        "exactPct": 100
+      },
+      "traces": [
+        {
+          "traceId": "013a3ef3-acdd-423b-abcb-90bc5a293cc2",
+          "primary": {
+            "kind": "n_plus_one",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.79
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.76
+            },
+            {
+              "kind": "n_plus_one",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.75
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.75
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.44
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "6a6fe914-f127-48b3-ab24-8f2e76ef802a",
+          "primary": {
+            "kind": "n_plus_one",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.85
+            },
+            {
+              "kind": "n_plus_one",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.78
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.76
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.75
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.44
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "3e0df628-91c3-4eff-9de1-1c507b6c419d",
+          "primary": {
+            "kind": "n_plus_one",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.82
+            },
+            {
+              "kind": "n_plus_one",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.77
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.76
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.75
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.44
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "32667368-4861-4016-8c25-3622fcb301bb",
+          "primary": {
+            "kind": "n_plus_one",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.83
+            },
+            {
+              "kind": "n_plus_one",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.79
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.76
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.75
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.44
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "fea3ebdf-4840-4df8-a620-2a843828557b",
+          "primary": {
+            "kind": "n_plus_one",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.81
+            },
+            {
+              "kind": "n_plus_one",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.77
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.76
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.75
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.44
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "failing_downstream",
+      "expected": [
+        {
+          "kind": "error_spike",
+          "service": "payment-service",
+          "operation": "chargeCard"
+        }
+      ],
+      "summary": {
+        "scenario": "failing_downstream",
+        "traces": 5,
+        "flaggedPct": 100,
+        "culpritPct": 100,
+        "kindPct": 100,
+        "exactPct": 100
+      },
+      "traces": [
+        {
+          "traceId": "50fed0db-482c-40fb-817d-7acfbabcbf70",
+          "primary": {
+            "kind": "error_spike",
+            "service": "payment-service",
+            "operation": "chargeCard"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 1
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "b7604240-88b7-422c-9b39-0c673212f941",
+          "primary": {
+            "kind": "error_spike",
+            "service": "payment-service",
+            "operation": "chargeCard"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 1
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "5862acf5-dca4-46f4-a107-e7e44f3a131b",
+          "primary": {
+            "kind": "error_spike",
+            "service": "payment-service",
+            "operation": "chargeCard"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 1
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "5b676ee0-119a-4042-b0e8-1f692f0cb4b5",
+          "primary": {
+            "kind": "error_spike",
+            "service": "payment-service",
+            "operation": "chargeCard"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 1
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "93541c88-2d86-4d89-be73-5e2642e0e7f1",
+          "primary": {
+            "kind": "error_spike",
+            "service": "payment-service",
+            "operation": "chargeCard"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 1
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "retry_storm",
+      "expected": [
+        {
+          "kind": "retry_storm",
+          "service": "order-service",
+          "operation": "processPayment"
+        },
+        {
+          "kind": "error_spike",
+          "service": "payment-service",
+          "operation": "chargeCard"
+        }
+      ],
+      "summary": {
+        "scenario": "retry_storm",
+        "traces": 5,
+        "flaggedPct": 100,
+        "culpritPct": 100,
+        "kindPct": 100,
+        "exactPct": 100
+      },
+      "traces": [
+        {
+          "traceId": "e00a1fb3-b53f-4373-b24b-e9a0554f5bc3",
+          "primary": {
+            "kind": "error_spike",
+            "service": "payment-service",
+            "operation": "chargeCard"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 1
+            },
+            {
+              "kind": "retry_storm",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 0.9
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.44
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "01a30475-a1f5-4aa5-98ba-6616071e62be",
+          "primary": {
+            "kind": "error_spike",
+            "service": "payment-service",
+            "operation": "chargeCard"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 1
+            },
+            {
+              "kind": "retry_storm",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 0.9
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.44
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "d0e229e5-152d-49b8-abdd-c9879fd4cbd3",
+          "primary": {
+            "kind": "error_spike",
+            "service": "payment-service",
+            "operation": "chargeCard"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 1
+            },
+            {
+              "kind": "retry_storm",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 0.9
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.44
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "c12cccac-4d7a-4b8c-9160-42e1ad951997",
+          "primary": {
+            "kind": "error_spike",
+            "service": "payment-service",
+            "operation": "chargeCard"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 1
+            },
+            {
+              "kind": "retry_storm",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 0.9
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.44
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "4137d1bc-a591-4400-80ef-2433b3eafc47",
+          "primary": {
+            "kind": "error_spike",
+            "service": "payment-service",
+            "operation": "chargeCard"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "payment-service",
+              "operation": "chargeCard",
+              "severity": 1
+            },
+            {
+              "kind": "retry_storm",
+              "service": "order-service",
+              "operation": "processPayment",
+              "severity": 0.9
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.44
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        }
+      ]
+    },
+    {
+      "scenario": "timeout_cascade",
+      "expected": [
+        {
+          "kind": "latency_regression",
+          "service": "inventory-service",
+          "operation": "db.query"
+        }
+      ],
+      "summary": {
+        "scenario": "timeout_cascade",
+        "traces": 5,
+        "flaggedPct": 100,
+        "culpritPct": 100,
+        "kindPct": 100,
+        "exactPct": 100
+      },
+      "traces": [
+        {
+          "traceId": "8c8461a0-5b0e-42bd-bea0-ade866111a22",
+          "primary": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.29
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.28
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "12de3ed1-a55e-493f-b894-c1f04cf64c86",
+          "primary": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.29
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.28
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "854f5d88-78c5-49f1-96fd-64ae1a43eb23",
+          "primary": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.29
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.28
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "2825dce5-9296-4bd8-94ee-04303f63c819",
+          "primary": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.29
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.28
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "d4c826e5-4b6e-4731-9755-7f819219c01e",
+          "primary": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "findings": [
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "error_spike",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 1
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 1
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.29
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.28
+            }
+          ],
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        }
+      ]
+    }
+  ]
+}
