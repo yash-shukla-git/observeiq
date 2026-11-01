@@ -3,7 +3,6 @@
 **/.next
 .git
 .idea
-.claude
 .env
 .env.*
 *.log
