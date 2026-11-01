@@ -9,22 +9,18 @@ export function pickPrimary(findings: Finding[], spans: SpanRow[]): Finding | nu
     if (findings.length === 0) return null;
 
     const byId = new Map(spans.map((s) => [s.spanId, s]));
-    const representative = (f: Finding): SpanRow | undefined => {
-        for (const id of f.spanIds) {
-            const span = byId.get(id);
-            if (span) return span;
-        }
-        return undefined;
-    };
+    const spansOf = (f: Finding): SpanRow[] =>
+        f.spanIds.map((id) => byId.get(id)).filter((s): s is SpanRow => s !== undefined);
 
+    // f is a symptom when some span of another finding sits below one of its own spans
     const causes = findings.filter((f) => {
-        const mine = representative(f);
-        if (!mine) return true;
-        return !findings.some((other) => {
-            if (other === f) return false;
-            const theirs = representative(other);
-            return theirs !== undefined && isAncestor(mine, theirs, byId);
-        });
+        const mine = spansOf(f);
+        if (mine.length === 0) return true;
+        return !findings.some(
+            (other) =>
+                other !== f &&
+                spansOf(other).some((theirs) => mine.some((m) => isAncestor(m, theirs, byId)))
+        );
     });
 
     const pool = causes.length > 0 ? causes : findings;

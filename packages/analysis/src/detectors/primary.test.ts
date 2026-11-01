@@ -28,6 +28,14 @@ test('a finding above another finding is a symptom, the deeper one is the cause'
     assert.equal(primary?.operation, 'leaf');
 });
 
+test('every span of a finding counts, not only the first one', () => {
+    // two attempts, the failing call below attempt 2 is not below the first span of the retry finding
+    const spans = [span('root', null), span('try1', 'root'), span('try2', 'root'), span('call2', 'try2')];
+    const retries: Finding = { ...finding('retry_storm', 'try1', 0.9), spanIds: ['try1', 'try2'] };
+    const failing = finding('error_spike', 'call2', 0.7);
+    assert.equal(pickPrimary([retries, failing], spans)?.kind, 'error_spike');
+});
+
 test('a finding without a span in the trace is still considered', () => {
     const lonely: Finding = { ...finding('latency_regression', 'x', 0.5), spanIds: [] };
     assert.equal(pickPrimary([lonely], chain), lonely);
