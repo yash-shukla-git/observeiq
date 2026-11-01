@@ -1,14 +1,15 @@
-#!/usr/bin/env ts-node
-
 /**
  * mock-emitter.ts
- * Posts a realistic fake trace (3 spans across 3 services) to the collector.
+ * Posts a fake trace (3 spans across 3 services) to the collector.
  * Usage:
- *   ts-node scripts/mock-emitter.ts
- *   COLLECTOR_URL=http://localhost:4318 ts-node scripts/mock-emitter.ts
+ *   npm run emit
+ *   TRACES=5 npm run emit
  */
 
-const COLLECTOR_URL = process.env.COLLECTOR_URL;
+import 'dotenv/config';
+
+const COLLECTOR_URL = process.env.COLLECTOR_URL || 'http://localhost:4318';
+const API_KEY = process.env.INGEST_API_KEY;
 
 function uuid(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -83,7 +84,10 @@ function buildTrace(): Span[] {
 async function emitTrace(spans: Span[]): Promise<void> {
     const res = await fetch(`${COLLECTOR_URL}/ingest`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            ...(API_KEY && { 'x-api-key': API_KEY }),
+        },
         body: JSON.stringify(spans),
     });
 

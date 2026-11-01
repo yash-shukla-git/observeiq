@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build:sdk
+      - run: npm run typecheck
+      - run: npm run lint --workspace=dashboard
+      - run: npm test
+      - run: npm run build --workspace=dashboard
+        env:
+          NEXT_PUBLIC_COLLECTOR_URL: http://localhost:4318
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f apps/collector/Dockerfile -t observeiq-collector .
+      - run: docker build -f apps/worker/Dockerfile -t observeiq-worker .
