@@ -19,8 +19,9 @@
     "dashboard": "npm run dev --workspace=dashboard",
     "emit": "tsx scripts/mock-emitter.ts",
     "test": "tsx --test apps/collector/src/lib/*.test.ts apps/worker/src/*.test.ts apps/dashboard/lib/*.test.ts packages/analysis/src/*.test.ts packages/analysis/src/detectors/*.test.ts",
-    "typecheck": "tsc --noEmit -p packages/sdk && tsc --noEmit -p apps/collector && tsc --noEmit -p apps/worker && tsc --noEmit -p apps/demo-app/order-service && tsc --noEmit -p apps/demo-app/inventory-service && tsc --noEmit -p apps/demo-app/payment-service && tsc --noEmit -p apps/dashboard && tsc --noEmit -p packages/analysis",
-    "analyze": "tsx scripts/analyze-cli.ts"
+    "typecheck": "tsc --noEmit -p packages/sdk && tsc --noEmit -p apps/collector && tsc --noEmit -p apps/worker && tsc --noEmit -p apps/demo-app/order-service && tsc --noEmit -p apps/demo-app/inventory-service && tsc --noEmit -p apps/demo-app/payment-service && tsc --noEmit -p apps/dashboard && tsc --noEmit -p packages/analysis && tsc --noEmit -p scripts",
+    "analyze": "tsx scripts/analyze-cli.ts",
+    "eval": "tsx scripts/eval/run-eval.ts"
   },
   "type": "module",
   "devDependencies": {
