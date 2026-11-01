@@ -2,13 +2,16 @@ import { getTrace } from '@/lib/api';
 import WaterfallChart from '@/app/components/WaterfallChart';
 import Header from '@/app/components/Header';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import { getSession } from '@/lib/session';
 
 interface Props {
     params: Promise<{ traceId: string }>;
 }
 
 export default async function TracePage({ params }: Props) {
+    if (!(await getSession())) redirect('/login');
+
     const { traceId } = await params;
     const tree = await getTrace(traceId);
     if (!tree) notFound();
