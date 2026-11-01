@@ -1,6 +1,6 @@
 # AI Analysis: design notes
 
-Status: the detector part is built and measured. The model part and the dashboard panel come next and are added to this file as they land.
+Status: the detectors and the model layer are built. The detector-only result is measured. The model runs need a Gemini API key and are still to be run (see the end of this file). The dashboard panel comes last and is added here when it lands.
 
 ## What it is for
 
@@ -73,3 +73,39 @@ Fault traces: 50, culprit 100%, exact 100%. Healthy traces: 10, falsely flagged 
 ### How to read this result
 
 It is a strong baseline on easy cases, not proof that the detectors work in general. The faults are synthetic and large, there are six scenarios, 10 traces each, one run, and the false positive rate comes from only 10 healthy traces. The detectors would be weaker on small slowdowns, noisy production traffic, or problems that have no detector. Because the baseline already scores 100% on culprit accuracy, a model cannot improve that number here. What a model can add is the written explanation and the next checks, and that is judged separately.
+
+## The model layer (`packages/analysis/src/llm`, `prompt.ts`, `validate.ts`, `diagnose.ts`)
+
+### Providers
+A provider is one small interface, `generate({system, user, schema, signal})` that returns the model's text (`llm/provider.ts`). Two are written: Gemini (through Google's official SDK, `llm/gemini.ts`) and Ollama for local models (`llm/ollama.ts`, plain `fetch`). Everything else (prompt, validation, retry, cache) is shared, so adding a provider means adding one file. Tests use a fake provider that returns a fixed list of answers. `AI_PROVIDER` picks the provider, and with nothing configured the analysis answers from the detectors alone.
+
+Facts taken from Google's documentation on 2026-11-01: the rate limit page gives no numbers for the free tier (they are shown per project in AI Studio), the stable low-cost models are `gemini-3.5-flash-lite` and `gemini-3.1-flash-lite` (the default is the first, set `GEMINI_MODEL` to change it), and content sent on the free tier may be used to improve Google's products. That last point is why the model only gets the abstracted evidence and never raw spans. The structured output options used by the SDK call (`responseMimeType`, `responseJsonSchema`) are marked deprecated in the SDK's types in favour of a newer `response_format`. They are not verified against the live API yet. The answer is validated in our own code in any case, so a provider ignoring the schema would only cost a retry.
+
+### Answer format and validation
+The model must answer with fixed JSON: `summary`, `root_cause` (kind, span_ref, service, operation), 1 to 5 `evidence` notes each pointing at a span, `confidence`, 1 to 3 `suggested_checks`. `validate.ts` checks the shape with zod, then checks that every cited span exists in the evidence and that the service and operation of the root cause match the span it cites. Rejected answers get one retry: the model is shown its own answer and the exact problems. After a second rejection the detector answer is returned. Length limits are checked here because the API does not enforce them.
+
+### Cost and reliability
+- Cache: results are stored in `analysis_runs` (migration 003), keyed by trace, evidence hash, provider and model. The same evidence is never sent twice.
+- Rate limit: the number of model calls in the last minute and the last day is counted from the same table and compared with `AI_MAX_CALLS_PER_MINUTE` and `AI_DAILY_LIMIT`. Over the limit, the detector answer is returned and no call is made. It is stored in the database, so it also works on hosting where each request may run in a different process.
+- Timeout: `AI_TIMEOUT_MS` (20 s), enforced with an abort signal.
+- Failure: a 429, a server error, a network error or a timeout returns the detector answer with the reason (`fallbackReason`). Failures are not retried, because a retry would not help and would spend quota.
+- A result always says where it came from (`source: llm | detector`), how many model calls it took, and why it fell back if it did.
+
+### Tests
+19 unit tests cover validation (invented span, mismatched service, bad JSON, wrong shapes, fenced JSON) and `diagnoseTrace` with a fake provider: valid answer mapped back to real span ids, real ids never sent to the model, retry after an invented span (and that the retry prompt names the problem), two rejections, provider failures, timeout, cache hit and cache off, rate limit, and the model-only arm hiding the findings.
+
+### Pipeline check without a real model
+The model path was run end to end against a stand-in HTTP server that speaks Ollama's protocol and answers by simple rules (not stored in the repo). Four traces went through the real Ollama provider, validation, the retry path (the stand-in cited a missing span on every fourth first attempt, one trace needed two calls), the database store, and the harness. With the model unreachable, the harness got the detector answer with `fallbackReason: unavailable`. This shows the plumbing works. It says nothing about how good a real model is, and no number from it is reported.
+
+## Evaluation modes
+
+`npm run eval -- --mode detector|llm|llm-only --variant b --traces 10`
+
+- `detector`: the detectors alone (reported above).
+- `llm`: detectors plus the model, which is the product. When the model is unavailable or rejected twice, the detector answer is what the user would see, and that is what gets scored.
+- `llm-only`: the model sees the same compact span summary but not the detector findings. This answers "do we need the detectors at all?". An answer is only counted if it came from the model.
+- Besides culprit/kind/exact accuracy the model modes record how often the model answered, how often on the first try, how often after a retry, how often it was rejected twice or unavailable, the median latency, and a rule-based check of whether the written explanation names the right service and operation. A second model is never used to judge.
+- `--delay` (default 6 s) spaces out model calls so the evaluation stays under the project's free tier limits.
+
+### Still to run
+The real model runs (`--mode llm` and `--mode llm-only`, variant b) need `GEMINI_API_KEY` in the untracked `.env`. Their results and the comparison table are added here once they exist.

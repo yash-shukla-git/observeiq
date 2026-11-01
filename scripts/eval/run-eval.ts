@@ -2,14 +2,21 @@ import 'dotenv/config';
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { Pool } from 'pg';
-import { analyzeTrace, defaultConfig } from '@observeiq/analysis';
+import {
+    analyzeTrace, defaultConfig, detectorDiagnosis, diagnoseTrace, pgStore, providerFromEnv, timeoutFromEnv,
+    type AnalysisResult,
+} from '@observeiq/analysis';
 import { scenarios, type Variant } from './scenarios';
-import { scoreAnswer, summarise, type TraceScore } from './score';
+import { namesCause, scoreAnswer, summarise, type Answer, type TraceScore } from './score';
 import { checkServices, clearFaults, sendOrders, setFaults, waitForSpans } from './traffic';
 
-// npm run eval -- --mode detector --variant a
-// options: --variant a|b  --baseline 60  --fault 30  --traces 5  --scenario slow_db
+// npm run eval -- --mode detector --variant b
+// modes:   detector  the detectors alone
+//          llm       detectors + model (the product: a failed model answer falls back to the detector answer)
+//          llm-only  the model alone, without the detector findings
+// options: --variant a|b  --baseline 60  --fault 30  --traces 5  --scenario slow_db  --delay 6000 (ms between model calls)
 // Needs the collector, the worker and the three demo services running (demo services with ENABLE_FAULTS=true).
+// The llm modes also need GEMINI_API_KEY (or AI_PROVIDER=ollama with OLLAMA_MODEL).
 // It EMPTIES the spans table, so it only runs against a local database.
 const args = process.argv.slice(2);
 const arg = (name: string, fallback: string) => {
@@ -22,9 +29,10 @@ const variant = arg('variant', 'a') as Variant;
 const baselineCount = Number(arg('baseline', '60'));
 const faultCount = Number(arg('fault', '30'));
 const tracesPerScenario = Number(arg('traces', '5'));
+const delayMs = Number(arg('delay', '6000'));
 const only = arg('scenario', '');
 
-if (mode !== 'detector') throw new Error(`unknown --mode ${mode}`);
+if (!['detector', 'llm', 'llm-only'].includes(mode)) throw new Error(`unknown --mode ${mode}`);
 if (variant !== 'a' && variant !== 'b') throw new Error('--variant must be a or b');
 
 const dbHost = new URL(process.env.DATABASE_URL ?? 'postgres://missing').hostname;
@@ -32,7 +40,14 @@ if (!['localhost', '127.0.0.1', '::1', '[::1]'].includes(dbHost)) {
     throw new Error(`refusing to run: DATABASE_URL points to ${dbHost}, this script empties the spans table`);
 }
 
+const provider = mode === 'detector' ? null : providerFromEnv(process.env);
+if (mode !== 'detector' && !provider) {
+    throw new Error('no model configured: set GEMINI_API_KEY in .env (or AI_PROVIDER=ollama and OLLAMA_MODEL)');
+}
+
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const store = pgStore(pool);
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // evenly spaced picks, so the traces are not cherry-picked
 function spread<T>(items: T[], n: number): T[] {
@@ -40,9 +55,16 @@ function spread<T>(items: T[], n: number): T[] {
     return Array.from({ length: n }, (_, i) => items[Math.floor((i * items.length) / n)]!);
 }
 
+const median = (values: number[]) => {
+    if (values.length === 0) return null;
+    const sorted = [...values].sort((a, b) => a - b);
+    return sorted[Math.floor(sorted.length / 2)]!;
+};
+
 async function main() {
     await checkServices();
     const results = [];
+    let modelCalls = 0;
 
     for (const scenario of scenarios.filter((s) => !only || s.id === only)) {
         console.log(`\n== ${scenario.id}: ${scenario.description}`);
@@ -74,20 +96,46 @@ async function main() {
         for (const traceId of traceIds) {
             const analysis = await analyzeTrace(pool, traceId, config);
             if (!analysis) continue;
-            const primary = analysis.primary;
-            const score = scoreAnswer(primary, scenario.expected);
+
+            let answer: Answer | null = analysis.primary && {
+                kind: analysis.primary.kind, service: analysis.primary.service, operation: analysis.primary.operation,
+            };
+            let text = detectorDiagnosis(analysis).summary;
+            let model: Pick<AnalysisResult, 'source' | 'fallbackReason' | 'attempts' | 'latencyMs' | 'summary' | 'checks' | 'confidence'> | null = null;
+
+            if (provider) {
+                if (modelCalls > 0) await sleep(delayMs); // stay well under the free tier limits
+                modelCalls++;
+                const result = await diagnoseTrace(analysis, {
+                    provider, store, limits: null, timeoutMs: timeoutFromEnv(process.env), useCache: false, useFindings: mode === 'llm',
+                });
+                const fromModel = result.source === 'llm' && result.rootCause.kind !== 'unknown';
+                const detectorFallback = result.source === 'detector' && mode === 'llm'; // the product shows this answer
+                answer = fromModel
+                    ? { kind: result.rootCause.kind, service: result.rootCause.service, operation: result.rootCause.operation }
+                    : detectorFallback ? answer : null;
+                text = result.summary;
+                model = {
+                    source: result.source, fallbackReason: result.fallbackReason, attempts: result.attempts, latencyMs: result.latencyMs,
+                    summary: result.summary, checks: result.checks, confidence: result.confidence,
+                };
+            }
+
+            const score = scoreAnswer(answer, scenario.expected);
             scores.push(score);
             traces.push({
                 traceId,
-                primary: primary && { kind: primary.kind, service: primary.service, operation: primary.operation },
-                findings: analysis.findings.map((f) => ({ kind: f.kind, service: f.service, operation: f.operation, severity: Number(f.severity.toFixed(2)) })),
+                answer,
+                detectorFindings: analysis.findings.map((f) => ({ kind: f.kind, service: f.service, operation: f.operation, severity: Number(f.severity.toFixed(2)) })),
+                explanationNamesCause: scenario.expected.length > 0 ? namesCause(text, scenario.expected) : null,
+                model,
                 score,
             });
-            console.log(`   ${traceId.slice(0, 8)}  ${primary ? `${primary.kind} @ ${primary.service} ${primary.operation}` : 'nothing flagged'}`);
+            const note = model ? ` [${model.source}${model.fallbackReason ? ':' + model.fallbackReason : ''}, ${model.attempts} call(s)]` : '';
+            console.log(`   ${traceId.slice(0, 8)}  ${answer ? `${answer.kind} @ ${answer.service} ${answer.operation}` : 'nothing flagged'}${note}`);
         }
 
-        const summary = summarise(scenario.id, scores);
-        results.push({ scenario: scenario.id, expected: scenario.expected, summary, traces });
+        results.push({ scenario: scenario.id, expected: scenario.expected, summary: summarise(scenario.id, scores), traces });
     }
     await clearFaults();
 
@@ -101,15 +149,30 @@ async function main() {
     const healthy = results.filter((r) => r.expected.length === 0).flatMap((r) => r.traces);
     const rate = (items: { score: TraceScore }[], key: keyof TraceScore) =>
         items.length === 0 ? null : Math.round((items.filter((t) => t.score[key]).length / items.length) * 100);
+
+    const modelRuns = results.flatMap((r) => r.traces).flatMap((t) => (t.model ? [t.model] : []));
     const overall = {
         faultTraces: faulty.length,
         culpritPct: rate(faulty, 'culprit'),
         exactPct: rate(faulty, 'exact'),
+        explanationNamesCausePct: faulty.length === 0 ? null : Math.round((faulty.filter((t) => t.explanationNamesCause).length / faulty.length) * 100),
         healthyTraces: healthy.length,
         falsePositivePct: rate(healthy, 'flagged'),
+        ...(provider ? {
+            provider: provider.name,
+            model: provider.model,
+            modelCalls: modelRuns.length,
+            answeredByModel: modelRuns.filter((m) => m.source === 'llm').length,
+            answeredFirstTry: modelRuns.filter((m) => m.source === 'llm' && m.attempts === 1).length,
+            answeredAfterRetry: modelRuns.filter((m) => m.source === 'llm' && m.attempts === 2).length,
+            rejectedTwice: modelRuns.filter((m) => m.fallbackReason === 'invalid_answer').length,
+            modelUnavailable: modelRuns.filter((m) => m.source === 'detector' && m.fallbackReason !== 'invalid_answer').length,
+            medianLatencyMs: median(modelRuns.flatMap((m) => (m.latencyMs ? [m.latencyMs] : []))),
+        } : {}),
     };
-    console.log(`\nfault traces: ${overall.faultTraces}, culprit ${overall.culpritPct}%, exact ${overall.exactPct}%`);
+    console.log(`\nfault traces: ${overall.faultTraces}, culprit ${overall.culpritPct}%, exact ${overall.exactPct}%, explanation names the cause ${overall.explanationNamesCausePct}%`);
     console.log(`healthy traces: ${overall.healthyTraces}, falsely flagged ${overall.falsePositivePct}%`);
+    if (provider) console.log(JSON.stringify(overall, null, 2));
 
     let commit = 'unknown';
     try {
@@ -123,7 +186,7 @@ async function main() {
     writeFileSync(file, JSON.stringify({
         mode, variant, commit,
         command: `npm run eval -- ${args.join(' ')}`.trim(),
-        params: { baselineCount, faultCount, tracesPerScenario },
+        params: { baselineCount, faultCount, tracesPerScenario, delayMs },
         thresholds: defaultConfig,
         overall, results,
     }, null, 2) + '\n');

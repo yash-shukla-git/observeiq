@@ -48,3 +48,11 @@ export function summarise(scenario: string, scores: TraceScore[]): SummaryRow {
         exactPct: pct(scores.filter((s) => s.exact).length, n),
     };
 }
+
+// Does the written explanation name the expected service and operation? A simple rule, no second model involved.
+export function namesCause(text: string, expected: Expected[]): boolean {
+    const lower = text.toLowerCase();
+    return expected.some(
+        (e) => lower.includes(e.operation.toLowerCase()) && lower.includes(e.service.replace(/-service$/, '').toLowerCase())
+    );
+}
