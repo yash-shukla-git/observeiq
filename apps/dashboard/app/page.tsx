@@ -1,7 +1,12 @@
 import { getTraces } from '@/lib/api';
+import { redirect } from 'next/navigation';
+import { getSession } from '@/lib/session';
+import Header from './components/Header';
 import TraceTable from './components/TraceTable';
 
 export default async function Home() {
+    if (!(await getSession())) redirect('/login');
+
     const traces = await getTraces();
 
     const totalTraces = traces.length;
@@ -14,15 +19,7 @@ export default async function Home() {
 
     return (
         <main className="min-h-screen w-full bg-[#111113] font-sans antialiased text-zinc-300 block">
-            {/* Header */}
-            <header className="w-full border-b border-zinc-800/60 bg-[#18181b]/80 px-8 py-3.5 flex items-center">
-                <div className="flex items-center gap-2.5">
-                    <svg className="w-4 h-4 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 12h3l3-9 4 18 3-13 3 4h3" />
-                    </svg>
-                    <span className="text-xs font-bold tracking-wider text-zinc-300 uppercase">ObserveIQ</span>
-                </div>
-            </header>
+            <Header />
 
             <div className="p-8 max-w-[1600px] mx-auto block">
                 <div className="mb-8">
