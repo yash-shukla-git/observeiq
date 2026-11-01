@@ -4,7 +4,7 @@ import express, { Request, Response } from 'express';
 import amqp from 'amqplib';
 import { Span } from './types';
 import {buildTree} from "./lib/buildTree";
-import {Pool} from "pg";
+import {pool} from "./lib/db";
 
 const app = express();
 app.use(express.json());
@@ -13,11 +13,6 @@ app.use(cors());
 const PORT = process.env.COLLECTOR_PORT || 4318;
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://missing-env';
 const QUEUE_NAME = process.env.QUEUE_NAME || 'spans';
-
-export const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: true,
-});
 
 let channel: amqp.Channel;
 
