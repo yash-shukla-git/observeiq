@@ -2,6 +2,7 @@ import { getTrace } from '@/lib/api';
 import WaterfallChart from '@/app/components/WaterfallChart';
 import Header from '@/app/components/Header';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 interface Props {
     params: Promise<{ traceId: string }>;
@@ -10,6 +11,7 @@ interface Props {
 export default async function TracePage({ params }: Props) {
     const { traceId } = await params;
     const tree = await getTrace(traceId);
+    if (!tree) notFound();
     const rootSpan = tree[0];
 
     return (
