@@ -100,18 +100,19 @@ app.get('/health', (_req: Request, res: Response) => {
 
 app.get('/traces', async (req: Request, res: Response) => {
     try {
+        // total duration is first start to last end, not SUM, because child spans overlap their parent.
+        // service_name comes from the root span (no parent); if the root is missing, the earliest span is used.
         const result = await pool.query(`
             SELECT
-                s.trace_id,
-                root.service_name,
-                MIN(s.start_time) AS start_time,
-                SUM(s.duration) AS total_duration_ms,
+                trace_id,
+                (ARRAY_AGG(service_name ORDER BY (parent_span_id IS NOT NULL), start_time))[1] AS service_name,
+                MIN(start_time) AS start_time,
+                MAX(start_time + duration) - MIN(start_time) AS total_duration_ms,
                 COUNT(*) AS span_count,
-                BOOL_OR(s.status = 'error') AS has_error
-            FROM spans s
-            LEFT JOIN spans root ON root.trace_id = s.trace_id AND root.parent_span_id IS NULL
-            GROUP BY s.trace_id, root.service_name
-            ORDER BY MIN(s.start_time) DESC
+                BOOL_OR(status = 'error') AS has_error
+            FROM spans
+            GROUP BY trace_id
+            ORDER BY MIN(start_time) DESC
             LIMIT 50;
         `);
         res.json(result.rows);
