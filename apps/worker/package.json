@@ -5,8 +5,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "ts-node src/index.ts",
-    "start": "node dist/index.js",
-    "migrate": "psql $DATABASE_URL -f migrations/001_create_spans_table.sql"
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "amqplib": "^0.10.9",

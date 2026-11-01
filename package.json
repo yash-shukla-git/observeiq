@@ -12,7 +12,8 @@
     "inventory": "tsx apps/demo-app/inventory-service/src/index.ts",
     "order": "tsx apps/demo-app/order-service/src/index.ts",
     "collector": "tsx apps/collector/src/index.ts",
-    "worker": "tsx apps/worker/src/index.ts"
+    "worker": "tsx apps/worker/src/index.ts",
+    "migrate": "tsx scripts/migrate.ts"
   },
   "type": "module",
   "devDependencies": {
