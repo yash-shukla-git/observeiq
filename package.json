@@ -15,7 +15,11 @@
     "collector": "tsx apps/collector/src/index.ts",
     "worker": "tsx apps/worker/src/index.ts",
     "migrate": "tsx scripts/migrate.ts",
-    "build:sdk": "npm run build --workspace=@yashshukla/observeiq-node"
+    "build:sdk": "npm run build --workspace=@yashshukla/observeiq-node",
+    "dashboard": "npm run dev --workspace=dashboard",
+    "emit": "tsx scripts/mock-emitter.ts",
+    "test": "tsx --test apps/collector/src/lib/*.test.ts apps/worker/src/*.test.ts apps/dashboard/lib/*.test.ts",
+    "typecheck": "tsc --noEmit -p packages/sdk && tsc --noEmit -p apps/collector && tsc --noEmit -p apps/worker && tsc --noEmit -p apps/demo-app/order-service && tsc --noEmit -p apps/demo-app/inventory-service && tsc --noEmit -p apps/demo-app/payment-service && tsc --noEmit -p apps/dashboard"
   },
   "type": "module",
   "devDependencies": {

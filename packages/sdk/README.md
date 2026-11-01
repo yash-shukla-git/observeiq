@@ -1,4 +1,4 @@
-#
+# @yashshukla/observeiq-node
 
 Distributed tracing SDK for Node.js. Drop it into any service to trace requests end-to-end and send spans to an ObserveIQ collector.
 
@@ -19,7 +19,7 @@ import { Tracer } from '@yashshukla/observeiq-node';
 
 const tracer = new Tracer({
   serviceName: 'order-service',
-  collectorUrl: 'http://localhost:4318/ingest',
+  collectorUrl: 'http://localhost:4318',
 });
 
 await tracer.trace('createOrder', async () => {
@@ -49,7 +49,7 @@ tracer.trace()          ← wraps your function, records start/end time
     │
     │  AsyncLocalStorage propagates traceId + spanId across async calls
     ▼
-POST /ingest            ← HTTP POST to collector with the Span payload
+POST /ingest            ← HTTP POST to collector with the Span payload (base URL + /ingest)
     │
     ▼
 RabbitMQ                ← collector pushes span onto queue
@@ -87,7 +87,7 @@ interface Span {
 | Option | Type | Required | Description |
 |---|---|---|---|
 | `serviceName` | `string` | Yes | Name of the service emitting spans |
-| `collectorUrl` | `string` | Yes | Full URL of the collector ingest endpoint |
+| `collectorUrl` | `string` | Yes | Base URL of the collector, for example `http://localhost:4318`. The SDK adds `/ingest` |
 | `apiKey` | `string` | No | Sent as the `x-api-key` header. Needed when the collector has `INGEST_API_KEY` set |
 
 ---
