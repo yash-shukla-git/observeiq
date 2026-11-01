@@ -10,7 +10,7 @@ const COLLECTOR_URL = process.env.COLLECTOR_URL!;
 const INVENTORY_URL = process.env.INVENTORY_URL;
 const PAYMENT_URL = process.env.PAYMENT_URL;
 
-const tracer = new Tracer({ serviceName: 'order-service', collectorUrl: COLLECTOR_URL });
+const tracer = new Tracer({ serviceName: 'order-service', collectorUrl: COLLECTOR_URL, apiKey: process.env.INGEST_API_KEY });
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 

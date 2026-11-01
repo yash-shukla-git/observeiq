@@ -14,6 +14,8 @@ services:
       RABBITMQ_URL: ${RABBITMQ_URL}
       QUEUE_NAME: ${QUEUE_NAME:-spans}
       COLLECTOR_PORT: 4318
+      INGEST_API_KEY: ${INGEST_API_KEY:-}
+      CORS_ORIGIN: ${CORS_ORIGIN:-}
     restart: always
 
   worker:

@@ -1,18 +1,22 @@
 import 'dotenv/config';
 import cors from 'cors';
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import amqp from 'amqplib';
-import { Span } from './types';
+import { timingSafeEqual } from 'crypto';
 import {buildTree} from "./lib/buildTree";
 import {pool} from "./lib/db";
+import {validateSpan} from "./lib/validateSpan";
 
 const app = express();
-app.use(express.json());
-app.use(cors());
+app.use(express.json({ limit: '256kb' }));
+// the dashboard calls this from the browser; set CORS_ORIGIN to its url in production
+app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
 
 const PORT = process.env.COLLECTOR_PORT || 4318;
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://missing-env';
 const QUEUE_NAME = process.env.QUEUE_NAME || 'spans';
+const INGEST_API_KEY = process.env.INGEST_API_KEY;
+const MAX_BATCH_SIZE = 100;
 
 let channel: amqp.Channel;
 
@@ -41,31 +45,39 @@ async function connectRabbitMQ(): Promise<void> {
     });
 }
 
-function validateSpan(body: unknown): body is Span {
-    if (typeof body !== 'object' || body === null) return false;
-    const s = body as Record<string, unknown>;
-    return (
-        typeof s.traceId === 'string' &&
-        typeof s.spanId === 'string' &&
-        (s.parentSpanId === null || typeof s.parentSpanId === 'string') &&
-        typeof s.operationName === 'string' &&
-        typeof s.serviceName === 'string' &&
-        typeof s.startTime === 'number' &&
-        typeof s.duration === 'number' &&
-        (s.status === 'ok' || s.status === 'error')
-    );
+// If no key is configured, ingest stays open so local development needs no setup.
+function requireApiKey(req: Request, res: Response, next: NextFunction): void {
+    if (!INGEST_API_KEY) {
+        next();
+        return;
+    }
+    const sent = Buffer.from(req.header('x-api-key') ?? '');
+    const expected = Buffer.from(INGEST_API_KEY);
+    // timingSafeEqual throws if lengths differ, so check length first
+    if (sent.length !== expected.length || !timingSafeEqual(sent, expected)) {
+        res.status(401).json({ error: 'Invalid or missing API key' });
+        return;
+    }
+    next();
 }
 
-app.post('/ingest', (req: Request, res: Response) => {
+app.post('/ingest', requireApiKey, (req: Request, res: Response) => {
     const body = req.body;
 
     // Accept both a single span and a batch array
     const spans: unknown[] = Array.isArray(body) ? body : [body];
 
-    const invalid = spans.filter((s) => !validateSpan(s));
-    if (invalid.length > 0) {
-        res.status(400).json({ error: 'Invalid span payload', count: invalid.length });
+    if (spans.length === 0 || spans.length > MAX_BATCH_SIZE) {
+        res.status(400).json({ error: `Send between 1 and ${MAX_BATCH_SIZE} spans per request` });
         return;
+    }
+
+    for (let i = 0; i < spans.length; i++) {
+        const problem = validateSpan(spans[i]);
+        if (problem) {
+            res.status(400).json({ error: 'Invalid span payload', index: i, reason: problem });
+            return;
+        }
     }
 
     if (!channel) {
@@ -141,6 +153,12 @@ app.get('/traces/:traceId', async (req: Request, res: Response) => {
         console.error('GET /traces/:traceId error:', err);
         res.status(503).json({ error: 'DB unavailable' });
     }
+});
+
+// body-parser errors (body too large, invalid json) would otherwise come back as an html page
+app.use((err: { status?: number }, _req: Request, res: Response, _next: NextFunction) => {
+    const status = err.status && err.status < 500 ? err.status : 500;
+    res.status(status).json({ error: status === 413 ? 'Payload too large' : status === 400 ? 'Invalid request body' : 'Internal error' });
 });
 
 async function start() {

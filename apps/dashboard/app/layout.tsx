@@ -1,18 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
-import { Activity, LayoutDashboard } from "lucide-react";
-import {
-    SidebarProvider,
-    Sidebar,
-    SidebarHeader,
-    SidebarContent,
-    SidebarMenu,
-    SidebarMenuItem,
-    SidebarMenuButton,
-    SidebarInset,
-} from "@/app/components/ui/sidebar";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",

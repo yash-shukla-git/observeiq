@@ -28,12 +28,21 @@ export default function TraceTable({ initialTraces }: { initialTraces: TraceSumm
     const [search, setSearch] = useState('');
     const [serviceFilter, setServiceFilter] = useState('all');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [offline, setOffline] = useState(false);
     const knownIds = useRef<Set<string>>(new Set(initialTraces.map((t) => t.trace_id)));
     const router = useRouter();
 
     useEffect(() => {
         const interval = setInterval(async () => {
-            const fresh = await getTraces();
+            let fresh: TraceSummary[];
+            try {
+                fresh = await getTraces();
+                setOffline(false);
+            } catch {
+                // keep showing the old rows and try again on the next tick
+                setOffline(true);
+                return;
+            }
             const newIds = fresh.map((t) => t.trace_id).filter((id) => !knownIds.current.has(id));
             if (newIds.length > 0) {
                 newIds.forEach((id) => knownIds.current.add(id));
@@ -103,6 +112,12 @@ export default function TraceTable({ initialTraces }: { initialTraces: TraceSumm
                     </select>
                 </div>
             </div>
+
+            {offline && (
+                <p className="text-xs text-amber-500/80 font-mono">
+                    Cannot reach the collector. Showing the last data, retrying every 5 seconds.
+                </p>
+            )}
 
             {/* Table */}
             <div className="w-full overflow-x-auto block border border-zinc-800/60 rounded-lg bg-[#18181b]">

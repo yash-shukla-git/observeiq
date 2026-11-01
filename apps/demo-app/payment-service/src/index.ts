@@ -8,7 +8,7 @@ app.use(express.json());
 const PORT = process.env.PAYMENT_PORT || 3003;
 const COLLECTOR_URL = process.env.COLLECTOR_URL!;
 
-const tracer = new Tracer({ serviceName: 'payment-service', collectorUrl: COLLECTOR_URL });
+const tracer = new Tracer({ serviceName: 'payment-service', collectorUrl: COLLECTOR_URL, apiKey: process.env.INGEST_API_KEY });
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 

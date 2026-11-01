@@ -88,6 +88,7 @@ interface Span {
 |---|---|---|---|
 | `serviceName` | `string` | Yes | Name of the service emitting spans |
 | `collectorUrl` | `string` | Yes | Full URL of the collector ingest endpoint |
+| `apiKey` | `string` | No | Sent as the `x-api-key` header. Needed when the collector has `INGEST_API_KEY` set |
 
 ---
 

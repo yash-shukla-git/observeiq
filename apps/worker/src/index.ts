@@ -1,11 +1,14 @@
 import 'dotenv/config';
-import amqp, {ChannelModel} from 'amqplib';
+import amqp, {ChannelModel, ConsumeMessage} from 'amqplib';
 import { Span } from './types';
 import { pool } from './db';
+import { isPermanentDbError } from './errors';
 
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://missing-env';
 const QUEUE_NAME = process.env.QUEUE_NAME || 'spans';
+const DEAD_LETTER_QUEUE = `${QUEUE_NAME}.dlq`;
 const PREFETCH = 10; // process up to 10 messages at once
+const RETRY_DELAY_MS = 2000;
 
 async function insertSpan(span: Span): Promise<void> {
     const query = `
@@ -53,6 +56,14 @@ async function connectWithRetry(url: string, retries = 10, delayMs = 3000): Prom
     throw new Error('[worker] Could not connect to RabbitMQ after retries');
 }
 
+// Messages that can never be saved go to a second queue so they can be inspected later.
+// Done here instead of with queue arguments, because changing the arguments of the existing
+// spans queue would make RabbitMQ reject it.
+function sendToDeadLetter(channel: any, msg: ConsumeMessage, reason: string): void {
+    channel.sendToQueue(DEAD_LETTER_QUEUE, msg.content, { persistent: true, headers: { reason } });
+    channel.ack(msg);
+}
+
 async function start() {
     // Verify DB connection
     await pool.query('SELECT 1');
@@ -61,19 +72,21 @@ async function start() {
     const connection: any = await connectWithRetry(RABBITMQ_URL);
     const channel = await connection.createChannel();
     await channel.assertQueue(QUEUE_NAME, { durable: true });
+    await channel.assertQueue(DEAD_LETTER_QUEUE, { durable: true });
     channel.prefetch(PREFETCH);
 
     console.log(`[worker] Waiting for spans on queue: ${QUEUE_NAME}`);
 
-    channel.consume(QUEUE_NAME, async (msg: { content: { toString: () => string; }; }) => {
+    channel.consume(QUEUE_NAME, async (msg: ConsumeMessage | null) => {
         if (!msg) return;
 
         let span: Span;
         try {
             span = JSON.parse(msg.content.toString()) as Span;
+            if (typeof span !== 'object' || span === null) throw new Error('not an object');
         } catch {
-            console.error('[worker] Failed to parse message, discarding');
-            channel.nack(msg, false, false); // dead-letter it, don't requeue garbage
+            console.error('[worker] Failed to parse message, moving to dead letter queue');
+            sendToDeadLetter(channel, msg, 'invalid message');
             return;
         }
 
@@ -82,8 +95,16 @@ async function start() {
             channel.ack(msg);
             console.log(`[worker] Saved span ${span.spanId} (trace: ${span.traceId})`);
         } catch (err) {
-            console.error('[worker] DB insert failed, requeuing:', err);
-            channel.nack(msg, false, true); // requeue on transient DB errors
+            if (isPermanentDbError(err)) {
+                console.error(`[worker] Span ${span.spanId} can never be saved, moving to dead letter queue:`, (err as Error).message);
+                sendToDeadLetter(channel, msg, (err as Error).message);
+                return;
+            }
+            // probably the database is down, so wait a bit instead of retrying in a tight loop
+            const code = (err as { code?: string }).code;
+            console.error('[worker] DB insert failed, requeuing:', (err as Error).message || code);
+            await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+            channel.nack(msg, false, true);
         }
     });
 }
