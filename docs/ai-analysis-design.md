@@ -1,6 +1,6 @@
 # AI Analysis: design notes
 
-Status: the detectors and the model layer are built. The detector-only result is measured. The model runs need a Gemini API key and are still to be run (see the end of this file). The dashboard panel comes last and is added here when it lands.
+Status: the detectors and the model layer are built. The detector-only result is measured. The model runs need a Gemini API key and are still to be run (see the end of this file). The dashboard panel is built too (last section).
 
 ## What it is for
 
@@ -106,6 +106,15 @@ The model path was run end to end against a stand-in HTTP server that speaks Oll
 - `llm-only`: the model sees the same compact span summary but not the detector findings. This answers "do we need the detectors at all?". An answer is only counted if it came from the model.
 - Besides culprit/kind/exact accuracy the model modes record how often the model answered, how often on the first try, how often after a retry, how often it was rejected twice or unavailable, the median latency, and a rule-based check of whether the written explanation names the right service and operation. A second model is never used to judge.
 - `--delay` (default 6 s) spaces out model calls so the evaluation stays under the project's free tier limits.
+
+## Dashboard (`apps/dashboard`)
+
+- **Where the logic lives:** `packages/analysis` is a library with no HTTP. The dashboard server calls it directly: the trace page runs the detectors while rendering (cheap, and wrapped so a failure cannot break the page), and `POST /api/analysis/[traceId]` runs the model part.
+- **Why a route handler on the dashboard and not on the collector:** the collector's read endpoints are open and have no login. A model call spends quota, so it sits behind the dashboard's session check. The API key never leaves the dashboard server. `proxy.ts` skips `/api` paths, so the route checks the session itself. It is a POST because the session cookie is not sent on cross-site POSTs (`SameSite=Lax`), which stops another website from spending quota on a visitor's behalf.
+- **Streaming:** the response is Server-Sent Events with stages: `status` (asking the model), then `result` (or `error`). Only the validated answer is ever sent, never partial model text. Streaming tokens would mean showing text before it has been checked against the evidence, which is the opposite of what the validation is for. `lib/sse.ts` parses the stream in the browser.
+- **The panel** (`AnalysisPanel.tsx`) shows the detector findings immediately, with the likely cause marked, then the model answer when asked. Clicking a finding or a piece of evidence highlights the spans in the waterfall (`TraceView.tsx` holds the shared state). When the answer is the detector fallback, a banner says why.
+- The package is TypeScript source, so `next.config.ts` lists it in `transpilePackages`.
+- Checked end to end against the stand-in model server and a screenshot of the page: unauthenticated POST gives 401, a bad trace id 400, an authenticated POST streams `status` then `result`, and a second call for the same trace is served from the cache. With the real model not yet run, the page was not checked with real model output.
 
 ### Still to run
 The real model runs (`--mode llm` and `--mode llm-only`, variant b) need `GEMINI_API_KEY` in the untracked `.env`. Their results and the comparison table are added here once they exist.
