@@ -1,0 +1,9 @@
+**/node_modules
+**/dist
+**/.next
+.git
+.idea
+.claude
+.env
+.env.*
+*.log
