@@ -43,7 +43,12 @@ export const scenarios: Scenario[] = [
         id: 'n_plus_one',
         description: 'Inventory runs one db.query per item instead of one in total.',
         faults: (v) => [{ service: 'inventory', body: { type: 'n_plus_one', items: pick(v, 12, 8) } }],
-        expected: [{ kind: 'n_plus_one', service: 'inventory-service', operation: 'db.query' }],
+        // The repeated span is db.query, but the loop that causes it is in checkInventory, so both name the incident.
+        // (checkInventory was added after the first model run on variant a showed models often point there.)
+        expected: [
+            { kind: 'n_plus_one', service: 'inventory-service', operation: 'db.query' },
+            { kind: 'n_plus_one', service: 'inventory-service', operation: 'checkInventory' },
+        ],
     },
     {
         id: 'failing_downstream',
