@@ -36,22 +36,6 @@ export function traceTotalMs(spans: SpanRow[]): number {
     return traceEnd(spans) - traceStart(spans);
 }
 
-// Time spent in a span itself: its duration minus the time of its children.
-// Children that run in parallel can add up to more than the parent, so it never goes below 0.
-export function selfTimes(spans: SpanRow[]): Map<string, number> {
-    const childTime = new Map<string, number>();
-    for (const s of spans) {
-        if (s.parentSpanId) {
-            childTime.set(s.parentSpanId, (childTime.get(s.parentSpanId) ?? 0) + s.duration);
-        }
-    }
-    const result = new Map<string, number>();
-    for (const s of spans) {
-        result.set(s.spanId, Math.max(0, s.duration - (childTime.get(s.spanId) ?? 0)));
-    }
-    return result;
-}
-
 export function isAncestor(ancestor: SpanRow, span: SpanRow, byId: Map<string, SpanRow>): boolean {
     let current = span.parentSpanId;
     while (current) {
