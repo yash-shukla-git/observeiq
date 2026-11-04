@@ -1,12 +1,14 @@
 {
   "mode": "detector",
   "variant": "b",
-  "commit": "7437a85",
+  "commit": "158413f",
   "command": "npm run eval -- --mode detector --variant b --traces 10",
   "params": {
     "baselineCount": 60,
     "faultCount": 30,
-    "tracesPerScenario": 10
+    "tracesPerScenario": 10,
+    "delayMs": 6000,
+    "timeoutMs": 60000
   },
   "thresholds": {
     "recentMs": 300000,
@@ -28,6 +30,7 @@
     "faultTraces": 50,
     "culpritPct": 100,
     "exactPct": 100,
+    "explanationNamesCausePct": 100,
     "healthyTraces": 10,
     "falsePositivePct": 0
   },
@@ -45,9 +48,11 @@
       },
       "traces": [
         {
-          "traceId": "c6c6ce90-29f5-4569-81e4-88bd55cea292",
-          "primary": null,
-          "findings": [],
+          "traceId": "28b9c621-d311-44e3-aa11-1ae969fef853",
+          "answer": null,
+          "detectorFindings": [],
+          "explanationNamesCause": null,
+          "model": null,
           "score": {
             "flagged": false,
             "culprit": false,
@@ -56,9 +61,11 @@
           }
         },
         {
-          "traceId": "86d1e775-ea44-4a24-9299-e613f918e457",
-          "primary": null,
-          "findings": [],
+          "traceId": "427df06a-a441-4eef-95f7-ff3bea82565a",
+          "answer": null,
+          "detectorFindings": [],
+          "explanationNamesCause": null,
+          "model": null,
           "score": {
             "flagged": false,
             "culprit": false,
@@ -67,9 +74,11 @@
           }
         },
         {
-          "traceId": "ff7eb2f3-36cf-42e3-ab59-dacb22e93c1f",
-          "primary": null,
-          "findings": [],
+          "traceId": "7666285a-41e6-41f3-bf01-a164497a30d3",
+          "answer": null,
+          "detectorFindings": [],
+          "explanationNamesCause": null,
+          "model": null,
           "score": {
             "flagged": false,
             "culprit": false,
@@ -78,9 +87,11 @@
           }
         },
         {
-          "traceId": "2ee82c6a-e9c4-4c5d-a997-fb959d41f12a",
-          "primary": null,
-          "findings": [],
+          "traceId": "f349fd1e-abdb-429c-b802-28e2464ae7b0",
+          "answer": null,
+          "detectorFindings": [],
+          "explanationNamesCause": null,
+          "model": null,
           "score": {
             "flagged": false,
             "culprit": false,
@@ -89,9 +100,11 @@
           }
         },
         {
-          "traceId": "36a960a2-cc33-4001-af04-b99a288729f6",
-          "primary": null,
-          "findings": [],
+          "traceId": "c73a6b17-ef4a-489e-a6de-012f30854a2b",
+          "answer": null,
+          "detectorFindings": [],
+          "explanationNamesCause": null,
+          "model": null,
           "score": {
             "flagged": false,
             "culprit": false,
@@ -100,9 +113,11 @@
           }
         },
         {
-          "traceId": "b7d6190d-f3ea-4cd5-b1dd-8869722c0b31",
-          "primary": null,
-          "findings": [],
+          "traceId": "cb2ea006-f464-48a8-b51d-9f0a56c273fc",
+          "answer": null,
+          "detectorFindings": [],
+          "explanationNamesCause": null,
+          "model": null,
           "score": {
             "flagged": false,
             "culprit": false,
@@ -111,9 +126,11 @@
           }
         },
         {
-          "traceId": "fe2ae694-f981-4e7d-be10-eab377ba10b2",
-          "primary": null,
-          "findings": [],
+          "traceId": "1051fd0e-38c4-4dc7-bc24-a43404bce59c",
+          "answer": null,
+          "detectorFindings": [],
+          "explanationNamesCause": null,
+          "model": null,
           "score": {
             "flagged": false,
             "culprit": false,
@@ -122,9 +139,11 @@
           }
         },
         {
-          "traceId": "587427b7-8a29-492f-a57a-f69352f3681f",
-          "primary": null,
-          "findings": [],
+          "traceId": "2945b01d-5caa-4254-84ec-9659f8158528",
+          "answer": null,
+          "detectorFindings": [],
+          "explanationNamesCause": null,
+          "model": null,
           "score": {
             "flagged": false,
             "culprit": false,
@@ -133,9 +152,11 @@
           }
         },
         {
-          "traceId": "becc6441-0af8-4244-b2a1-1f95d9a573e0",
-          "primary": null,
-          "findings": [],
+          "traceId": "4f87cd10-3554-466d-85c8-e9d5ebe17e3f",
+          "answer": null,
+          "detectorFindings": [],
+          "explanationNamesCause": null,
+          "model": null,
           "score": {
             "flagged": false,
             "culprit": false,
@@ -144,9 +165,11 @@
           }
         },
         {
-          "traceId": "8ebc735f-c1ea-4384-acfe-95aa51bff61e",
-          "primary": null,
-          "findings": [],
+          "traceId": "7eb242aa-43b6-4e2e-8347-34d7d3789da8",
+          "answer": null,
+          "detectorFindings": [],
+          "explanationNamesCause": null,
+          "model": null,
           "score": {
             "flagged": false,
             "culprit": false,
@@ -175,168 +198,46 @@
       },
       "traces": [
         {
-          "traceId": "aafb319c-2f74-422a-98fe-23a7ee374945",
-          "primary": {
+          "traceId": "57aae92a-3b3e-40db-b08b-8113a8dda4a9",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
-            {
-              "kind": "slow_downstream",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.83
-            },
+          "detectorFindings": [
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.63
+              "severity": 0.96
             },
             {
               "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.44
-            }
-          ],
-          "score": {
-            "flagged": true,
-            "culprit": true,
-            "kind": true,
-            "exact": true
-          }
-        },
-        {
-          "traceId": "08a9685e-266f-4ab2-b90d-b5a5891bb6ce",
-          "primary": {
-            "kind": "latency_regression",
-            "service": "inventory-service",
-            "operation": "db.query"
-          },
-          "findings": [
-            {
-              "kind": "slow_downstream",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.85
-            },
-            {
-              "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "db.query",
-              "severity": 0.63
-            },
-            {
-              "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.44
-            }
-          ],
-          "score": {
-            "flagged": true,
-            "culprit": true,
-            "kind": true,
-            "exact": true
-          }
-        },
-        {
-          "traceId": "c3c69362-8cc4-4b9a-8452-b9e5beed9377",
-          "primary": {
-            "kind": "latency_regression",
-            "service": "inventory-service",
-            "operation": "db.query"
-          },
-          "findings": [
-            {
-              "kind": "slow_downstream",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.85
-            },
-            {
-              "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "db.query",
-              "severity": 0.63
-            },
-            {
-              "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.44
-            }
-          ],
-          "score": {
-            "flagged": true,
-            "culprit": true,
-            "kind": true,
-            "exact": true
-          }
-        },
-        {
-          "traceId": "8d86add9-bf74-4ca2-8e1e-ada880b2f242",
-          "primary": {
-            "kind": "latency_regression",
-            "service": "inventory-service",
-            "operation": "db.query"
-          },
-          "findings": [
-            {
-              "kind": "slow_downstream",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.88
-            },
-            {
-              "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "db.query",
-              "severity": 0.63
-            },
-            {
-              "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.44
-            }
-          ],
-          "score": {
-            "flagged": true,
-            "culprit": true,
-            "kind": true,
-            "exact": true
-          }
-        },
-        {
-          "traceId": "70580575-7ae8-4c60-9a54-1ef3d2ed401b",
-          "primary": {
-            "kind": "latency_regression",
-            "service": "inventory-service",
-            "operation": "db.query"
-          },
-          "findings": [
-            {
-              "kind": "slow_downstream",
               "service": "inventory-service",
               "operation": "checkInventory",
               "severity": 0.86
             },
             {
-              "kind": "latency_regression",
+              "kind": "slow_downstream",
               "service": "inventory-service",
-              "operation": "db.query",
-              "severity": 0.63
+              "operation": "checkInventory",
+              "severity": 0.84
             },
             {
               "kind": "latency_regression",
-              "service": "inventory-service",
+              "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.44
+              "severity": 0.83
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.52
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -345,13 +246,115 @@
           }
         },
         {
-          "traceId": "ac07b82a-cb68-4892-9bb5-787d51e26d7c",
-          "primary": {
+          "traceId": "ffdac590-1d20-4ea9-a00f-41d868adb3a0",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.96
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.86
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.85
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.83
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.52
+            }
+          ],
+          "explanationNamesCause": true,
+          "model": null,
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "be602e75-84f5-4141-8ac9-b4b56e6a0431",
+          "answer": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "detectorFindings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.96
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.86
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.84
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.83
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.52
+            }
+          ],
+          "explanationNamesCause": true,
+          "model": null,
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "4b052cb9-de2c-4130-9548-10bd21482729",
+          "answer": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "detectorFindings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.96
+            },
             {
               "kind": "slow_downstream",
               "service": "inventory-service",
@@ -361,16 +364,24 @@
             {
               "kind": "latency_regression",
               "service": "inventory-service",
-              "operation": "db.query",
-              "severity": 0.63
+              "operation": "checkInventory",
+              "severity": 0.86
             },
             {
               "kind": "latency_regression",
-              "service": "inventory-service",
+              "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.44
+              "severity": 0.83
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.52
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -379,81 +390,25 @@
           }
         },
         {
-          "traceId": "89704109-81fb-4613-856b-745aff00c0d2",
-          "primary": {
+          "traceId": "f192cbfb-3820-44c8-96b3-344f82d86832",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
-            {
-              "kind": "slow_downstream",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.85
-            },
+          "detectorFindings": [
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.63
+              "severity": 0.96
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.44
-            }
-          ],
-          "score": {
-            "flagged": true,
-            "culprit": true,
-            "kind": true,
-            "exact": true
-          }
-        },
-        {
-          "traceId": "dac06349-4f92-4ed1-ab9c-049a2e20fe46",
-          "primary": {
-            "kind": "latency_regression",
-            "service": "inventory-service",
-            "operation": "db.query"
-          },
-          "findings": [
-            {
-              "kind": "slow_downstream",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.85
+              "severity": 0.86
             },
-            {
-              "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "db.query",
-              "severity": 0.63
-            },
-            {
-              "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.44
-            }
-          ],
-          "score": {
-            "flagged": true,
-            "culprit": true,
-            "kind": true,
-            "exact": true
-          }
-        },
-        {
-          "traceId": "786ea6c4-6cca-418f-9140-5ac1538276c9",
-          "primary": {
-            "kind": "latency_regression",
-            "service": "inventory-service",
-            "operation": "db.query"
-          },
-          "findings": [
             {
               "kind": "slow_downstream",
               "service": "inventory-service",
@@ -462,17 +417,19 @@
             },
             {
               "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "db.query",
-              "severity": 0.63
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.83
             },
             {
               "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.44
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.52
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -481,13 +438,73 @@
           }
         },
         {
-          "traceId": "2330ac55-ea97-4b54-ba37-d76e452b1aa8",
-          "primary": {
+          "traceId": "a3ee5032-2dfd-43e3-8275-976dd00c9428",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.96
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.88
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.86
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.83
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.52
+            }
+          ],
+          "explanationNamesCause": true,
+          "model": null,
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "ae4f4c6f-5514-45f2-8bf6-6547670767aa",
+          "answer": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "detectorFindings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.96
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.86
+            },
             {
               "kind": "slow_downstream",
               "service": "inventory-service",
@@ -496,17 +513,163 @@
             },
             {
               "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.83
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.52
+            }
+          ],
+          "explanationNamesCause": true,
+          "model": null,
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "b0f8de82-8eab-4896-b441-e9fa75adcd6f",
+          "answer": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "detectorFindings": [
+            {
+              "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.63
+              "severity": 0.96
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.88
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.44
+              "severity": 0.86
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.83
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.52
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "9479d7ab-549b-4ead-8cec-077a4ee06483",
+          "answer": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "detectorFindings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.96
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.86
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.86
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.83
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.52
+            }
+          ],
+          "explanationNamesCause": true,
+          "model": null,
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "49c34200-f3e7-46ad-92f3-b7f76262884d",
+          "answer": {
+            "kind": "latency_regression",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "detectorFindings": [
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.96
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.86
+            },
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.85
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.83
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.52
+            }
+          ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -523,6 +686,11 @@
           "kind": "n_plus_one",
           "service": "inventory-service",
           "operation": "db.query"
+        },
+        {
+          "kind": "n_plus_one",
+          "service": "inventory-service",
+          "operation": "checkInventory"
         }
       ],
       "summary": {
@@ -535,44 +703,46 @@
       },
       "traces": [
         {
-          "traceId": "9d13005a-8d2e-40ad-a2a9-29ef659325b3",
-          "primary": {
+          "traceId": "9972d40c-c9a0-4d42-a48e-c31faaf0c369",
+          "answer": {
             "kind": "n_plus_one",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "slow_downstream",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.7
+              "severity": 0.71
             },
             {
               "kind": "n_plus_one",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.65
+              "severity": 0.67
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.64
+              "severity": 0.61
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.62
+              "severity": 0.6
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.36
+              "severity": 0.32
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -581,59 +751,13 @@
           }
         },
         {
-          "traceId": "e7006b2c-89ac-485d-b1f0-cab6c783a9be",
-          "primary": {
+          "traceId": "89921678-18c5-45ef-a653-0df6375f5275",
+          "answer": {
             "kind": "n_plus_one",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
-            {
-              "kind": "slow_downstream",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.73
-            },
-            {
-              "kind": "n_plus_one",
-              "service": "inventory-service",
-              "operation": "db.query",
-              "severity": 0.68
-            },
-            {
-              "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.64
-            },
-            {
-              "kind": "latency_regression",
-              "service": "order-service",
-              "operation": "checkInventory",
-              "severity": 0.62
-            },
-            {
-              "kind": "latency_regression",
-              "service": "order-service",
-              "operation": "POST /order",
-              "severity": 0.36
-            }
-          ],
-          "score": {
-            "flagged": true,
-            "culprit": true,
-            "kind": true,
-            "exact": true
-          }
-        },
-        {
-          "traceId": "38994e3f-0d13-4d88-87b4-05ee909b88ef",
-          "primary": {
-            "kind": "n_plus_one",
-            "service": "inventory-service",
-            "operation": "db.query"
-          },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "slow_downstream",
               "service": "inventory-service",
@@ -650,21 +774,23 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.64
+              "severity": 0.61
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.62
+              "severity": 0.6
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.36
+              "severity": 0.32
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -673,13 +799,61 @@
           }
         },
         {
-          "traceId": "8811354c-337f-4dcb-9231-f7a2a5c26aa7",
-          "primary": {
+          "traceId": "99e73b09-a8d5-49b2-bbff-aa4605d73718",
+          "answer": {
             "kind": "n_plus_one",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.72
+            },
+            {
+              "kind": "n_plus_one",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.69
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.61
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.6
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.32
+            }
+          ],
+          "explanationNamesCause": true,
+          "model": null,
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "c7733e7c-9642-45a5-89e2-35f7f70d656f",
+          "answer": {
+            "kind": "n_plus_one",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "detectorFindings": [
             {
               "kind": "slow_downstream",
               "service": "inventory-service",
@@ -696,21 +870,23 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.64
+              "severity": 0.61
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.62
+              "severity": 0.6
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.36
+              "severity": 0.32
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -719,44 +895,46 @@
           }
         },
         {
-          "traceId": "7c78c576-f725-47c1-9829-e092cc72d5ca",
-          "primary": {
+          "traceId": "378899ab-a28b-4ccc-aba5-ebdc382bf377",
+          "answer": {
             "kind": "n_plus_one",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "slow_downstream",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.79
+              "severity": 0.76
             },
             {
               "kind": "n_plus_one",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.76
+              "severity": 0.72
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.64
+              "severity": 0.61
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.62
+              "severity": 0.6
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.36
+              "severity": 0.32
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -765,13 +943,13 @@
           }
         },
         {
-          "traceId": "272a9a21-b739-4018-9fe9-f7c0a9ad51c0",
-          "primary": {
+          "traceId": "9d04a8e5-8bc5-4e10-8c2d-c3f119a49a9d",
+          "answer": {
             "kind": "n_plus_one",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "slow_downstream",
               "service": "inventory-service",
@@ -788,21 +966,23 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.64
+              "severity": 0.61
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.62
+              "severity": 0.6
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.36
+              "severity": 0.32
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -811,13 +991,61 @@
           }
         },
         {
-          "traceId": "4a1e653c-0ceb-4279-bf48-9ccedc29f41e",
-          "primary": {
+          "traceId": "09dacf4e-0b09-48e2-a3da-8bf4f2e930bd",
+          "answer": {
             "kind": "n_plus_one",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
+            {
+              "kind": "slow_downstream",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.75
+            },
+            {
+              "kind": "n_plus_one",
+              "service": "inventory-service",
+              "operation": "db.query",
+              "severity": 0.71
+            },
+            {
+              "kind": "latency_regression",
+              "service": "inventory-service",
+              "operation": "checkInventory",
+              "severity": 0.61
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "checkInventory",
+              "severity": 0.6
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.32
+            }
+          ],
+          "explanationNamesCause": true,
+          "model": null,
+          "score": {
+            "flagged": true,
+            "culprit": true,
+            "kind": true,
+            "exact": true
+          }
+        },
+        {
+          "traceId": "8524c062-7393-4d2b-b0ad-69c43f31612a",
+          "answer": {
+            "kind": "n_plus_one",
+            "service": "inventory-service",
+            "operation": "db.query"
+          },
+          "detectorFindings": [
             {
               "kind": "slow_downstream",
               "service": "inventory-service",
@@ -828,27 +1056,29 @@
               "kind": "n_plus_one",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.69
+              "severity": 0.68
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.64
+              "severity": 0.61
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.62
+              "severity": 0.6
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.36
+              "severity": 0.32
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -857,44 +1087,46 @@
           }
         },
         {
-          "traceId": "69e5c440-6978-489d-bce0-221fedf497ac",
-          "primary": {
+          "traceId": "5dc3fc60-6800-4d5a-bb74-e99d50b83426",
+          "answer": {
             "kind": "n_plus_one",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "slow_downstream",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.74
+              "severity": 0.79
             },
             {
               "kind": "n_plus_one",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.7
+              "severity": 0.75
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.64
+              "severity": 0.61
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.62
+              "severity": 0.6
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.36
+              "severity": 0.32
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -903,13 +1135,13 @@
           }
         },
         {
-          "traceId": "a16f6313-d4b4-4466-b228-ecaf7327b008",
-          "primary": {
+          "traceId": "bf68f6b3-259d-4e32-9cfd-3a89e4e9432c",
+          "answer": {
             "kind": "n_plus_one",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "slow_downstream",
               "service": "inventory-service",
@@ -920,73 +1152,29 @@
               "kind": "n_plus_one",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.74
+              "severity": 0.73
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.64
+              "severity": 0.61
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.62
-            },
-            {
-              "kind": "latency_regression",
-              "service": "order-service",
-              "operation": "POST /order",
-              "severity": 0.36
-            }
-          ],
-          "score": {
-            "flagged": true,
-            "culprit": true,
-            "kind": true,
-            "exact": true
-          }
-        },
-        {
-          "traceId": "a23718c3-3a9d-4598-9edc-0e3349f875f0",
-          "primary": {
-            "kind": "n_plus_one",
-            "service": "inventory-service",
-            "operation": "db.query"
-          },
-          "findings": [
-            {
-              "kind": "slow_downstream",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.74
-            },
-            {
-              "kind": "n_plus_one",
-              "service": "inventory-service",
-              "operation": "db.query",
-              "severity": 0.69
-            },
-            {
-              "kind": "latency_regression",
-              "service": "inventory-service",
-              "operation": "checkInventory",
-              "severity": 0.64
-            },
-            {
-              "kind": "latency_regression",
-              "service": "order-service",
-              "operation": "checkInventory",
-              "severity": 0.62
+              "severity": 0.6
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.36
+              "severity": 0.32
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1015,13 +1203,13 @@
       },
       "traces": [
         {
-          "traceId": "b62696a8-34b4-4566-a81b-6bb3b8c440a9",
-          "primary": {
+          "traceId": "7709797b-d027-4781-b02b-858b4466d2a0",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1041,6 +1229,8 @@
               "severity": 1
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1049,13 +1239,13 @@
           }
         },
         {
-          "traceId": "5f77d452-19b0-45fb-b7a5-e2891aadea51",
-          "primary": {
+          "traceId": "1c2e0e7d-cfe4-4e39-8dec-e312fd6119e3",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1075,6 +1265,8 @@
               "severity": 1
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1083,13 +1275,13 @@
           }
         },
         {
-          "traceId": "139512f9-d91d-4f7e-8b14-482cff847c0d",
-          "primary": {
+          "traceId": "a1c1ae42-4d8f-479e-a513-e2f5b5224e00",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1109,6 +1301,8 @@
               "severity": 1
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1117,13 +1311,13 @@
           }
         },
         {
-          "traceId": "97f10d1f-5856-4103-b4b0-13e947209375",
-          "primary": {
+          "traceId": "cb19fca3-15b6-4612-b579-75caeeb14910",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1143,6 +1337,8 @@
               "severity": 1
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1151,13 +1347,13 @@
           }
         },
         {
-          "traceId": "71b97a07-7cc4-4407-8359-38d3ab1667c5",
-          "primary": {
+          "traceId": "3eba30d0-ada0-4b20-a8f7-65aba2e52a28",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1177,6 +1373,8 @@
               "severity": 1
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1185,13 +1383,13 @@
           }
         },
         {
-          "traceId": "d63d6bdd-998f-46bb-9a40-fa741556376c",
-          "primary": {
+          "traceId": "2ca15012-bd3d-4959-835e-85aed9fc5896",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1211,6 +1409,8 @@
               "severity": 1
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1219,13 +1419,13 @@
           }
         },
         {
-          "traceId": "614173a5-32fa-4de9-a69f-c7888aa630e9",
-          "primary": {
+          "traceId": "2bbf3c1b-d1ab-48aa-b88c-467d689104ad",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1245,6 +1445,8 @@
               "severity": 1
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1253,13 +1455,13 @@
           }
         },
         {
-          "traceId": "b549a3f4-7bac-4fa8-bc12-3d09e5bdaacb",
-          "primary": {
+          "traceId": "37c6f288-cbde-4bc3-b56c-be719538ad4b",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1279,6 +1481,8 @@
               "severity": 1
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1287,13 +1491,13 @@
           }
         },
         {
-          "traceId": "ca695a83-9758-4fe1-984b-1975c6cf56ae",
-          "primary": {
+          "traceId": "038025d2-4d8a-4f4f-8791-aab73f6acfed",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1313,6 +1517,8 @@
               "severity": 1
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1321,13 +1527,13 @@
           }
         },
         {
-          "traceId": "c27c406d-05bc-46f3-943b-f27015e89113",
-          "primary": {
+          "traceId": "2b83445a-d007-4aaf-b0b2-467807c2e7c6",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1347,6 +1553,8 @@
               "severity": 1
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1380,13 +1588,13 @@
       },
       "traces": [
         {
-          "traceId": "3076018c-d75c-4f23-a162-b483fbf45512",
-          "primary": {
+          "traceId": "793a56c3-3a51-48eb-a241-6242555566db",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1415,9 +1623,11 @@
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.41
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1426,13 +1636,13 @@
           }
         },
         {
-          "traceId": "caa1f7c2-aa0c-41cc-82d0-9adc7daf95ce",
-          "primary": {
+          "traceId": "1cc1cb34-339e-4a14-8e42-7d57b928d1ea",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1461,9 +1671,11 @@
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.41
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1472,13 +1684,13 @@
           }
         },
         {
-          "traceId": "862dbbdc-e35a-4c81-9010-d676076c32b1",
-          "primary": {
+          "traceId": "e4344a3e-3ff4-49c9-9c2e-2fe6474d51bc",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1507,9 +1719,11 @@
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.41
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1518,13 +1732,13 @@
           }
         },
         {
-          "traceId": "909745b5-0542-4275-91bb-9a0692955acc",
-          "primary": {
+          "traceId": "ae12be2f-b3c2-42db-9611-0a8c8ee1b720",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1553,9 +1767,11 @@
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.41
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1564,13 +1780,13 @@
           }
         },
         {
-          "traceId": "e4c8b2d3-c7e0-4fb6-9fe6-03548eb7693a",
-          "primary": {
+          "traceId": "94dd00ec-5d34-4102-9f05-e9eb60a83c40",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1599,9 +1815,11 @@
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.41
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1610,13 +1828,13 @@
           }
         },
         {
-          "traceId": "e54d6566-ee9a-442e-892e-cea7bdc28414",
-          "primary": {
+          "traceId": "ea93cba6-7ac6-42b2-910e-4f52ef1a6c14",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1645,9 +1863,11 @@
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.41
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1656,13 +1876,13 @@
           }
         },
         {
-          "traceId": "8b3a9e63-0311-40d8-b2fe-c567d2fc95de",
-          "primary": {
+          "traceId": "523e8d34-791f-40fa-bdc3-af8c37ad478b",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1691,9 +1911,11 @@
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.41
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1702,13 +1924,13 @@
           }
         },
         {
-          "traceId": "4a2cbb40-5e47-4e0f-986e-3fc26858cc15",
-          "primary": {
+          "traceId": "e9e6de5d-5703-412e-8266-1010a2c9afa9",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1737,9 +1959,11 @@
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.41
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1748,13 +1972,13 @@
           }
         },
         {
-          "traceId": "23d7c356-84f8-47b6-b70c-6d320f04c04e",
-          "primary": {
+          "traceId": "c5cb513f-e755-4bc7-b8d2-ef44a2c3f14f",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1783,9 +2007,11 @@
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.41
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1794,13 +2020,13 @@
           }
         },
         {
-          "traceId": "d749285d-2a8c-469f-b018-48aed0f7f387",
-          "primary": {
+          "traceId": "e0889e9a-2882-4ab9-87f4-109b01970e8b",
+          "answer": {
             "kind": "error_spike",
             "service": "payment-service",
             "operation": "chargeCard"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1829,9 +2055,11 @@
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "POST /order",
-              "severity": 0.41
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1860,13 +2088,13 @@
       },
       "traces": [
         {
-          "traceId": "87720658-c879-42a5-b46d-6db6d45468f5",
-          "primary": {
+          "traceId": "019824c4-7a8b-4582-aa0b-dad983676909",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1889,21 +2117,29 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.84
+              "severity": 0.99
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.7
+              "severity": 0.91
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.51
+              "severity": 0.72
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1912,13 +2148,13 @@
           }
         },
         {
-          "traceId": "6e0466d5-1919-406f-b0cd-63d0b2b758a5",
-          "primary": {
+          "traceId": "45d485a0-73bd-4215-aa0e-ff030a623307",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1941,21 +2177,29 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.84
+              "severity": 0.99
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.7
+              "severity": 0.91
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.51
+              "severity": 0.72
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -1964,13 +2208,13 @@
           }
         },
         {
-          "traceId": "7841a230-30d2-4ec1-8939-2bb31efc3059",
-          "primary": {
+          "traceId": "33a5ac20-eaa8-49b5-818c-652deb55c604",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -1993,21 +2237,29 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.84
+              "severity": 0.99
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.7
+              "severity": 0.91
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.51
+              "severity": 0.72
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -2016,13 +2268,13 @@
           }
         },
         {
-          "traceId": "b4192bda-b2a1-4900-ac77-5064607b039f",
-          "primary": {
+          "traceId": "9e12a5c4-fe57-43e4-b63f-6e4ba3a99a57",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -2045,21 +2297,29 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.84
+              "severity": 0.99
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.7
+              "severity": 0.91
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.51
+              "severity": 0.72
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -2068,13 +2328,13 @@
           }
         },
         {
-          "traceId": "ed0e10dc-a1c5-4243-a158-dcd6845f1cb2",
-          "primary": {
+          "traceId": "9c8a3f30-6f0c-4006-8f8a-12873904fff9",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -2097,21 +2357,29 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.84
+              "severity": 0.99
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.7
+              "severity": 0.91
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.51
+              "severity": 0.72
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -2120,13 +2388,13 @@
           }
         },
         {
-          "traceId": "7fe600f0-9ec1-4c6a-9a49-697c3f98db4a",
-          "primary": {
+          "traceId": "e1a2956c-19ac-43d2-9341-e11ef0461862",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -2149,21 +2417,29 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.84
+              "severity": 0.99
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.7
+              "severity": 0.91
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.51
+              "severity": 0.72
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -2172,13 +2448,13 @@
           }
         },
         {
-          "traceId": "55787bde-62cf-45a1-994e-376fd9a16074",
-          "primary": {
+          "traceId": "e8361178-2a44-4a23-9da8-91542d237b52",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -2201,21 +2477,29 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.84
+              "severity": 0.99
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.7
+              "severity": 0.91
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.51
+              "severity": 0.72
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -2224,13 +2508,13 @@
           }
         },
         {
-          "traceId": "2d8e55b9-b8d3-4525-b218-e1d03d0a719f",
-          "primary": {
+          "traceId": "66e481d3-550c-4068-b3eb-6921f60ec049",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -2253,21 +2537,29 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.84
+              "severity": 0.99
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.7
+              "severity": 0.91
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.51
+              "severity": 0.72
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -2276,13 +2568,13 @@
           }
         },
         {
-          "traceId": "bf29950e-0dcb-4af4-99a9-0453ecf1213a",
-          "primary": {
+          "traceId": "2e5bb222-119b-45fd-be37-dc7ca917b670",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -2305,21 +2597,29 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.84
+              "severity": 0.99
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.7
+              "severity": 0.91
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.51
+              "severity": 0.72
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,
@@ -2328,13 +2628,13 @@
           }
         },
         {
-          "traceId": "7e556ae5-a476-40b6-a7bc-7bd08bb31dc5",
-          "primary": {
+          "traceId": "4295cc27-83ce-4e5b-aff0-3b338c85a685",
+          "answer": {
             "kind": "latency_regression",
             "service": "inventory-service",
             "operation": "db.query"
           },
-          "findings": [
+          "detectorFindings": [
             {
               "kind": "error_spike",
               "service": "order-service",
@@ -2357,21 +2657,29 @@
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "db.query",
-              "severity": 0.84
+              "severity": 0.99
             },
             {
               "kind": "latency_regression",
               "service": "inventory-service",
               "operation": "checkInventory",
-              "severity": 0.7
+              "severity": 0.91
             },
             {
               "kind": "latency_regression",
               "service": "order-service",
               "operation": "checkInventory",
-              "severity": 0.51
+              "severity": 0.72
+            },
+            {
+              "kind": "latency_regression",
+              "service": "order-service",
+              "operation": "POST /order",
+              "severity": 0.37
             }
           ],
+          "explanationNamesCause": true,
+          "model": null,
           "score": {
             "flagged": true,
             "culprit": true,

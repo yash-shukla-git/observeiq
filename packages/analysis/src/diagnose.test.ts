@@ -117,6 +117,15 @@ test('a model that takes too long is cut off', async () => {
     assert.equal(result.source, 'detector');
 });
 
+test('a model that ignores the abort signal is still cut off on time', async () => {
+    const { store } = memoryStore();
+    const stuck: LlmProvider = { name: 'stuck', model: 'stuck-model', generate: () => new Promise(() => {}) }; // never answers, never rejects
+    const started = Date.now();
+    const result = await diagnoseTrace(analysis, { limits: null, timeoutMs: 30, provider: stuck, store });
+    assert.equal(result.fallbackReason, 'timeout');
+    assert.ok(Date.now() - started < 1000);
+});
+
 test('the same evidence is answered from the cache, without calling the model again', async () => {
     const { store } = memoryStore();
     const provider = createFakeProvider([good]);

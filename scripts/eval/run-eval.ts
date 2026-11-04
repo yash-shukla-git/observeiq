@@ -3,7 +3,7 @@ import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { Pool } from 'pg';
 import {
-    analyzeTrace, defaultConfig, detectorDiagnosis, diagnoseTrace, pgStore, providerFromEnv, timeoutFromEnv,
+    analyzeTrace, defaultConfig, detectorDiagnosis, diagnoseTrace, pgStore, providerFromEnv,
     type AnalysisResult,
 } from '@observeiq/analysis';
 import { scenarios, type Variant } from './scenarios';
@@ -14,7 +14,7 @@ import { checkServices, clearFaults, sendOrders, setFaults, waitForSpans } from 
 // modes:   detector  the detectors alone
 //          llm       detectors + model (the product: a failed model answer falls back to the detector answer)
 //          llm-only  the model alone, without the detector findings
-// options: --variant a|b  --baseline 60  --fault 30  --traces 5  --scenario slow_db  --delay 6000 (ms between model calls)
+// options: --variant a|b  --baseline 60  --fault 30  --traces 5  --scenario slow_db  --delay 6000 (ms between model calls)  --timeout 60000
 // Needs the collector, the worker and the three demo services running (demo services with ENABLE_FAULTS=true).
 // The llm modes also need GEMINI_API_KEY (or AI_PROVIDER=ollama with OLLAMA_MODEL).
 // It EMPTIES the spans table, so it only runs against a local database.
@@ -30,6 +30,8 @@ const baselineCount = Number(arg('baseline', '60'));
 const faultCount = Number(arg('fault', '30'));
 const tracesPerScenario = Number(arg('traces', '5'));
 const delayMs = Number(arg('delay', '6000'));
+// longer than the product's 20 s on purpose: the evaluation measures the model, the number of calls above 20 s is reported separately
+const timeoutMs = Number(arg('timeout', '60000'));
 const only = arg('scenario', '');
 
 if (!['detector', 'llm', 'llm-only'].includes(mode)) throw new Error(`unknown --mode ${mode}`);
@@ -55,11 +57,12 @@ function spread<T>(items: T[], n: number): T[] {
     return Array.from({ length: n }, (_, i) => items[Math.floor((i * items.length) / n)]!);
 }
 
-const median = (values: number[]) => {
+const percentile = (values: number[], p: number) => {
     if (values.length === 0) return null;
     const sorted = [...values].sort((a, b) => a - b);
-    return sorted[Math.floor(sorted.length / 2)]!;
+    return sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * p))]!;
 };
+const median = (values: number[]) => percentile(values, 0.5);
 
 async function main() {
     await checkServices();
@@ -107,7 +110,7 @@ async function main() {
                 if (modelCalls > 0) await sleep(delayMs); // stay well under the free tier limits
                 modelCalls++;
                 const result = await diagnoseTrace(analysis, {
-                    provider, store, limits: null, timeoutMs: timeoutFromEnv(process.env), useCache: false, useFindings: mode === 'llm',
+                    provider, store, limits: null, timeoutMs, useCache: false, useFindings: mode === 'llm',
                 });
                 const fromModel = result.source === 'llm' && result.rootCause.kind !== 'unknown';
                 const detectorFallback = result.source === 'detector' && mode === 'llm'; // the product shows this answer
@@ -167,7 +170,10 @@ async function main() {
             answeredAfterRetry: modelRuns.filter((m) => m.source === 'llm' && m.attempts === 2).length,
             rejectedTwice: modelRuns.filter((m) => m.fallbackReason === 'invalid_answer').length,
             modelUnavailable: modelRuns.filter((m) => m.source === 'detector' && m.fallbackReason !== 'invalid_answer').length,
+            timedOut: modelRuns.filter((m) => m.fallbackReason === 'timeout').length,
             medianLatencyMs: median(modelRuns.flatMap((m) => (m.latencyMs ? [m.latencyMs] : []))),
+            p90LatencyMs: percentile(modelRuns.flatMap((m) => (m.latencyMs ? [m.latencyMs] : [])), 0.9),
+            callsOver20s: modelRuns.filter((m) => (m.latencyMs ?? 0) > 20_000).length, // would have timed out with the product's default
         } : {}),
     };
     console.log(`\nfault traces: ${overall.faultTraces}, culprit ${overall.culpritPct}%, exact ${overall.exactPct}%, explanation names the cause ${overall.explanationNamesCausePct}%`);
@@ -186,7 +192,7 @@ async function main() {
     writeFileSync(file, JSON.stringify({
         mode, variant, commit,
         command: `npm run eval -- ${args.join(' ')}`.trim(),
-        params: { baselineCount, faultCount, tracesPerScenario, delayMs },
+        params: { baselineCount, faultCount, tracesPerScenario, delayMs, timeoutMs },
         thresholds: defaultConfig,
         overall, results,
     }, null, 2) + '\n');

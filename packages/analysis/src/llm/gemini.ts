@@ -2,7 +2,9 @@ import { GoogleGenAI } from '@google/genai';
 import { LlmError, toLlmError, type LlmProvider } from './provider';
 
 export function createGeminiProvider(apiKey: string, model: string): LlmProvider {
-    const ai = new GoogleGenAI({ apiKey });
+    // The SDK retries 429 and 5xx up to 5 times with growing delays by default. That would hide a rate limit
+    // behind a long wait, so retries are turned off here and diagnose.ts decides what to do with a failure.
+    const ai = new GoogleGenAI({ apiKey, httpOptions: { retryOptions: { attempts: 1 } } });
 
     return {
         name: 'gemini',

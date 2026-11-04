@@ -1,6 +1,6 @@
 import { buildEvidence } from './evidence';
 import { detectorDiagnosis, type Diagnosis } from './fallback';
-import { toLlmError, type LlmFailure, type LlmProvider } from './llm/provider';
+import { LlmError, toLlmError, type LlmFailure, type LlmProvider } from './llm/provider';
 import { ANSWER_JSON_SCHEMA, SYSTEM_PROMPT, buildRetryPrompt, buildUserPrompt } from './prompt';
 import type { AnalysisStore } from './store';
 import type { TraceAnalysis } from './types';
@@ -86,10 +86,20 @@ export async function diagnoseTrace(analysis: TraceAnalysis, options: DiagnoseOp
     while (attempts < 2) {
         attempts++;
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        let timer: ReturnType<typeof setTimeout> | undefined;
         let raw: string;
         try {
-            raw = await provider.generate({ system: SYSTEM_PROMPT, user: prompt, schema: ANSWER_JSON_SCHEMA, signal: controller.signal });
+            // The abort signal asks the client library to stop, but libraries do not always react to it
+            // (one call hung for ten minutes). So the timeout is also enforced here, by racing the call.
+            const call = provider.generate({ system: SYSTEM_PROMPT, user: prompt, schema: ANSWER_JSON_SCHEMA, signal: controller.signal });
+            call.catch(() => {}); // if the timeout wins, a later failure of the call is ignored
+            const timeout = new Promise<never>((_, reject) => {
+                timer = setTimeout(() => {
+                    controller.abort();
+                    reject(new LlmError('timeout', 'request timed out'));
+                }, timeoutMs);
+            });
+            raw = await Promise.race([call, timeout]);
         } catch (err) {
             const failure = toLlmError(err);
             const latencyMs = Date.now() - started;

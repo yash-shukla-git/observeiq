@@ -1,6 +1,6 @@
 # AI Analysis: design notes
 
-Status: the detectors and the model layer are built. The detector-only result is measured. The model runs need a Gemini API key and are still to be run (see the end of this file). The dashboard panel is built too (last section).
+Status: the detectors, the model layer and the dashboard panel are built. All three evaluation modes have been run for real against `gemini-3.5-flash-lite`. The results are in the last section.
 
 ## What it is for
 
@@ -54,32 +54,14 @@ For each scenario the harness empties the `spans` table, sends 60 normal orders 
 - `healthy` is a control with no fault. Anything flagged there is a false positive.
 - A trace counts as right when the picked finding names an expected service and operation (culprit), an expected kind, or both for the same expected answer (exact). The retry scenario accepts two answers, the retries or the failing payment behind them.
 
-### Detector-only result
-
-Command: `npm run eval -- --mode detector --variant b --traces 10`
-Result file: `docs/eval-results/2026-11-01T12-19-detector-b.json` (commit `7437a85`)
-
-| Scenario | Traces | Flagged | Culprit | Kind | Exact |
-|---|---|---|---|---|---|
-| healthy | 10 | 0% | 0% | 0% | 0% |
-| slow_db | 10 | 100% | 100% | 100% | 100% |
-| n_plus_one | 10 | 100% | 100% | 100% | 100% |
-| failing_downstream | 10 | 100% | 100% | 100% | 100% |
-| retry_storm | 10 | 100% | 100% | 100% | 100% |
-| timeout_cascade | 10 | 100% | 100% | 100% | 100% |
-
-Fault traces: 50, culprit 100%, exact 100%. Healthy traces: 10, falsely flagged 0%. (For `healthy` the culprit, kind and exact columns are 0% by definition, there is nothing to find.)
-
-### How to read this result
-
-It is a strong baseline on easy cases, not proof that the detectors work in general. The faults are synthetic and large, there are six scenarios, 10 traces each, one run, and the false positive rate comes from only 10 healthy traces. The detectors would be weaker on small slowdowns, noisy production traffic, or problems that have no detector. Because the baseline already scores 100% on culprit accuracy, a model cannot improve that number here. What a model can add is the written explanation and the next checks, and that is judged separately.
-
 ## The model layer (`packages/analysis/src/llm`, `prompt.ts`, `validate.ts`, `diagnose.ts`)
 
 ### Providers
 A provider is one small interface, `generate({system, user, schema, signal})` that returns the model's text (`llm/provider.ts`). Two are written: Gemini (through Google's official SDK, `llm/gemini.ts`) and Ollama for local models (`llm/ollama.ts`, plain `fetch`). Everything else (prompt, validation, retry, cache) is shared, so adding a provider means adding one file. Tests use a fake provider that returns a fixed list of answers. `AI_PROVIDER` picks the provider, and with nothing configured the analysis answers from the detectors alone.
 
-Facts taken from Google's documentation on 2026-11-01: the rate limit page gives no numbers for the free tier (they are shown per project in AI Studio), the stable low-cost models are `gemini-3.5-flash-lite` and `gemini-3.1-flash-lite` (the default is the first, set `GEMINI_MODEL` to change it), and content sent on the free tier may be used to improve Google's products. That last point is why the model only gets the abstracted evidence and never raw spans. The structured output options used by the SDK call (`responseMimeType`, `responseJsonSchema`) are marked deprecated in the SDK's types in favour of a newer `response_format`. They are not verified against the live API yet. The answer is validated in our own code in any case, so a provider ignoring the schema would only cost a retry.
+Facts taken from Google's documentation on 2026-11-01: the rate limit page gives no numbers for the free tier (they are shown per project in AI Studio), the stable low-cost models are `gemini-3.5-flash-lite` and `gemini-3.1-flash-lite` (the default is the first, set `GEMINI_MODEL` to change it), and content sent on the free tier may be used to improve Google's products. That last point is why the model only gets the abstracted evidence and never raw spans. The structured output options used by the SDK call (`responseMimeType`, `responseJsonSchema`) are marked deprecated in the SDK's types in favour of a newer `response_format`. They were checked against the live API with a real key: `gemini-3.5-flash-lite` accepted them and returned JSON that matched the schema. The answer is validated in our own code in any case.
+
+Two things only showed up with real calls. The SDK retries 429 and 5xx responses up to 5 times with growing delays by default, which hid a rate limit behind a long wait, so its retries are turned off (`attempts: 1`) and `diagnose.ts` decides what to do with a failure. And one call took 611 seconds to give up although the timeout was 20 seconds, because the client library did not react to the abort signal in time. The timeout is now also enforced by racing the call against a timer (with a test using a provider that never answers).
 
 ### Answer format and validation
 The model must answer with fixed JSON: `summary`, `root_cause` (kind, span_ref, service, operation), 1 to 5 `evidence` notes each pointing at a span, `confidence`, 1 to 3 `suggested_checks`. `validate.ts` checks the shape with zod, then checks that every cited span exists in the evidence and that the service and operation of the root cause match the span it cites. Rejected answers get one retry: the model is shown its own answer and the exact problems. After a second rejection the detector answer is returned. Length limits are checked here because the API does not enforce them.
@@ -114,7 +96,53 @@ The model path was run end to end against a stand-in HTTP server that speaks Oll
 - **Streaming:** the response is Server-Sent Events with stages: `status` (asking the model), then `result` (or `error`). Only the validated answer is ever sent, never partial model text. Streaming tokens would mean showing text before it has been checked against the evidence, which is the opposite of what the validation is for. `lib/sse.ts` parses the stream in the browser.
 - **The panel** (`AnalysisPanel.tsx`) shows the detector findings immediately, with the likely cause marked, then the model answer when asked. Clicking a finding or a piece of evidence highlights the spans in the waterfall (`TraceView.tsx` holds the shared state). When the answer is the detector fallback, a banner says why.
 - The package is TypeScript source, so `next.config.ts` lists it in `transpilePackages`.
-- Checked end to end against the stand-in model server and a screenshot of the page: unauthenticated POST gives 401, a bad trace id 400, an authenticated POST streams `status` then `result`, and a second call for the same trace is served from the cache. With the real model not yet run, the page was not checked with real model output.
+- Checked end to end, first against the stand-in model server (with a screenshot of the page), then with the real key: unauthenticated POST gives 401, a bad trace id 400, an authenticated POST streams `status` then `result` (a real Gemini answer in about 2 s), a second call for the same trace is served from the cache, and with the daily cap exceeded (the evaluations had used 120 calls) the endpoint answered from the detectors with `rate_limited`. The key was read from the repo root `.env` through the fallback in `next.config.ts`. The visual layout was only checked with the stand-in answer.
 
-### Still to run
-The real model runs (`--mode llm` and `--mode llm-only`, variant b) need `GEMINI_API_KEY` in the untracked `.env`. Their results and the comparison table are added here once they exist.
+## Results (real runs)
+
+Variant b (fault sizes the detectors and the prompt were not tuned on), 10 traces per scenario, one run per mode, model `gemini-3.5-flash-lite`, commit `158413f`. Result files: `docs/eval-results/2026-11-02T14-24-detector-b.json`, `2026-11-02T14-51-llm-b.json`, `2026-11-02T16-24-llm-only-b.json`.
+
+Commands: `npm run eval -- --mode detector --variant b --traces 10`, then the same with `--mode llm --delay 6000` and `--mode llm-only --delay 6000`. The evaluation uses a 60 s model timeout (`--timeout`) so it measures the model and not slow moments of the API. Calls above 20 s are counted separately because the product's default would have cut them off.
+
+Each cell is "culprit found / exact" (culprit: right service and operation; exact: also the right kind, paired with the same place).
+
+| Scenario | Detectors only | Detectors + model | Model only (no findings) |
+|---|---|---|---|
+| slow_db | 100% / 100% | 100% / 100% | 100% / 50% |
+| n_plus_one | 100% / 100% | 100% / 100% | 100% / 100% |
+| failing_downstream | 100% / 100% | 100% / 70% | 100% / 40% |
+| retry_storm | 100% / 100% | 100% / 20% | 80% / 40% |
+| timeout_cascade | 100% / 100% | 100% / 100% | 90% / 0% |
+| **all 5 fault scenarios (50 traces)** | **100% / 100%** | **100% / 78%** | **94% / 46%** |
+| healthy, falsely flagged (10 traces) | 0% | 0% | 0% |
+
+Model behaviour (`--mode llm` / `--mode llm-only`):
+
+| | detectors + model | model only |
+|---|---|---|
+| calls | 60 | 60 |
+| answered | 60 | 57 (3 timed out at 60 s) |
+| accepted on the first try | 60 | 57 |
+| needed the retry / rejected twice | 0 / 0 | 0 / 0 |
+| median / 90th percentile latency | 2.0 s / 6.6 s | 2.2 s / 30.0 s |
+| calls above 20 s | 2 | 6 |
+| explanation names the cause (rule check) | 98% | 92% |
+
+What the model answered where it differed from the expected label (the model with findings):
+- `failing_downstream`: 7 times "error spike at payment chargeCard" (expected), 3 times "slow downstream call at payment chargeCard".
+- `retry_storm`: 8 times "retry storm at payment chargeCard", 2 times "error spike at payment chargeCard". The expected answers are retry storm at the order service's `processPayment` (the retries) or error spike at payment's `chargeCard`. Mixing the retry label with the payment service is neither, so it counts as culprit and kind right but not exact.
+- `n_plus_one`: 8 times pointed at `checkInventory` (the calling operation), 2 times at `db.query`. Both count.
+Without findings the model used "slow downstream call" for most slow-database cases (5 of 10 in `slow_db`, 9 of 9 answered in `timeout_cascade`), where the expected label is latency regression.
+
+### How to read this
+
+- Finding the place is solved by the detectors on these faults, so a model cannot improve that number. It matched them (100%) when it had the findings and was slightly worse (94%, with 3 unanswered) without them.
+- The lower exact scores for the model come from label choices, and several labels overlap. They are real differences from the expected labels, and the scoring was not changed after the final runs, but they are not the same as "wrong diagnosis".
+- The model's contribution is the written explanation and the suggested checks. This evaluation only checks by rule that the text names the right service and operation. It does not measure how useful the text is to a person. That would need people reading the answers.
+- The detectors are what make the model dependable: with the findings every answer was valid on the first try and fast, without them there were timeouts and a 30 s tail.
+
+### Limits and what was changed along the way
+
+- Five synthetic faults plus a healthy control, 10 traces each, one run per mode, one model. Differences of a few traces are noise. Nothing here says how other models or real traffic would behave.
+- Changes made after seeing the first model runs on the tuning variant (a), before the final runs on variant b: the rule that checks whether the explanation names the cause was made less literal; the N+1 scenario accepts the calling operation as well as the repeated query; the SDK retries were turned off and the timeout race was added. The prompt, the thresholds and the scoring were not changed after that.
+- An earlier run of 18 model calls showed six 20 s timeouts. They were caused by the SDK's hidden retries and by slow moments of the API, which is how the two fixes above were found. Those runs are not reported.
