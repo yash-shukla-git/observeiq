@@ -44,8 +44,9 @@ apps/
   dashboard/      Next.js app (waterfall chart, login)
   demo-app/       order, inventory and payment services that use the SDK
 packages/sdk/     @yashshukla/observeiq-node
-scripts/          migrate.ts (runs the SQL migrations), mock-emitter.ts (sends fake traces)
-docs/             design notes
+packages/analysis/  detectors and the optional model-backed explanation used by the dashboard
+scripts/          migrate.ts (SQL migrations), mock-emitter.ts (fake traces), analyze-cli.ts, eval/ (fault evaluation)
+docs/             design notes, evaluation results
 docker-compose.yml        local PostgreSQL and RabbitMQ
 docker-compose.prod.yml   collector and worker containers
 ```
@@ -115,6 +116,8 @@ Root `.env` (collector, worker, demo services, migrate script):
 | `COLLECTOR_URL` | Where the demo services and mock emitter send spans |
 | `INGEST_API_KEY` | If set, `/ingest` needs a matching `x-api-key` header. Empty means open |
 | `CORS_ORIGIN` | Browser origin allowed to call the collector. Default allows any |
+| `ENABLE_FAULTS` | `true` lets the demo services accept `POST /__fault` (used by `npm run eval`). Never in production |
+| `GEMINI_API_KEY`, `GEMINI_MODEL`, `AI_PROVIDER`, `OLLAMA_*`, `AI_*` | Optional AI analysis, see below |
 
 Dashboard `apps/dashboard/.env.local`: `NEXT_PUBLIC_COLLECTOR_URL`, `DATABASE_URL`, `DATABASE_SSL`, `SESSION_SECRET`, `ALLOW_SIGNUP`. The dashboard needs `DATABASE_URL` because user accounts are stored in the same database.
 
@@ -147,6 +150,46 @@ More in [packages/sdk/README.md](./packages/sdk/README.md).
 
 A trace's duration is the time from the first span start to the last span end. Summing span durations would count nested spans twice.
 
+## AI Analysis
+
+On a trace page, a side panel next to the waterfall looks for the likely cause of a slow or failing request and says what to check next. It has two parts:
+
+1. **Detectors** (plain code, no model). They compare the trace with what is normal for each operation. Latency regression (p99 against a baseline window), error-rate spike, the same call repeated many times in one trace (N+1), a retry storm, and a slow call into another service. They run on every trace page view and cost nothing.
+2. **An optional model** that explains the detector findings. When you click "Analyze with AI", a compact summary of the trace (not the raw spans) goes to the model, which must answer in a fixed JSON format. Its answer is rejected if it cites a span that is not in the summary, or names a service or operation that does not match the span it cites. It gets one retry, then the detector answer is shown instead. The same happens if the model is down, slow or rate limited.
+
+```
+spans table -> detectors -> findings -> evidence summary (spans renamed S1, S2, ...)
+                                              |
+                      cache / rate limit / timeout -> model (Gemini or Ollama)
+                                              |
+                       validate -> retry once -> fallback to detector answer -> side panel (streamed stages)
+```
+
+Setup is optional. Without a key everything else works and the button is disabled. To use Gemini put `GEMINI_API_KEY` in `apps/dashboard/.env.local` (server side only, never in a `NEXT_PUBLIC_` variable) and run `npm run migrate` once for the `analysis_runs` table. The default model is `gemini-3.5-flash-lite`, change it with `GEMINI_MODEL`. `AI_MAX_CALLS_PER_MINUTE` and `AI_DAILY_LIMIT` cap the calls, set them under the limits shown for your project in Google AI Studio. Ollama works too (`AI_PROVIDER=ollama`, `OLLAMA_MODEL=...`).
+
+Keep in mind that Google's pricing page says content sent on the free tier may be used to improve their products. Only the abstracted summary leaves the server: renamed spans, a few allowed tags, shortened error text.
+
+The detectors need a baseline older than the "recent" window (5 minutes by default), so a stack that was started a minute ago will only show the single-trace rules (repeated calls, a clearly dominant slow call).
+
+Try it from the terminal: `npm run analyze -- --latest` prints the findings for the newest trace, `--evidence` also prints what a model would receive.
+
+### Evaluation
+
+The demo services can be put into known faults (`npm run eval` switches them on over `POST /__fault`): slow database queries, one query per item, a failing payment service, order retries, and a slow database combined with a short client timeout. The expected cause of each fault lives only in `scripts/eval/scenarios.ts`, never in the spans. Details of the method and its limits are in [docs/ai-analysis-design.md](./docs/ai-analysis-design.md).
+
+Detector only, fault sizes the thresholds were not tuned on (variant b), 10 traces per scenario. Command: `npm run eval -- --mode detector --variant b --traces 10`, result file `docs/eval-results/2026-11-01T12-19-detector-b.json`.
+
+| Scenario | Culprit found | Exact (right kind and place) |
+|---|---|---|
+| slow_db | 100% | 100% |
+| n_plus_one | 100% | 100% |
+| failing_downstream | 100% | 100% |
+| retry_storm | 100% | 100% |
+| timeout_cascade | 100% | 100% |
+| healthy (nothing should be flagged) | 0% flagged | |
+
+This is a strong result on easy, synthetic cases, not proof for real traffic. Six scenarios, 10 traces each, one run, and the false positive rate comes from 10 healthy traces. Because the detectors already find the culprit here, a model cannot improve that number. What a model can add is the written explanation. The model runs (`--mode llm` and `--mode llm-only`) need a Gemini key and have not been run yet, so there are no model numbers in this README.
+
 ## Tests and CI
 
 ```bash
@@ -155,7 +198,7 @@ npm run typecheck    # tsc for every package
 npm run lint --workspace=dashboard
 ```
 
-The tests cover the tree builder, span validation, the worker's decision on which database errors are retried, and the session token. GitHub Actions (`.github/workflows/ci.yml`) runs install, SDK build, typecheck, lint, tests, the dashboard build, and builds both Docker images. There is no automated end-to-end test of the whole pipeline yet, I check that by hand with the steps above.
+The tests cover the tree builder, span validation, the worker's decision on which database errors are retried, the session token, the detectors, the evidence builder, answer validation, the model orchestration with a fake provider (retry, fallback, cache, rate limit, timeout) and the stream parser. No test calls a real model. GitHub Actions (`.github/workflows/ci.yml`) runs install, SDK build, typecheck, lint, tests, the dashboard build, and builds both Docker images. There is no automated end-to-end test of the whole pipeline yet, I check that by hand with the steps above.
 
 ## Deploying
 
@@ -174,6 +217,7 @@ Nothing is deployed right now. What the repo gives you:
 - The read endpoints (`/traces`) are open. Only `/ingest` can be protected with a key.
 - Login has no lockout after repeated wrong passwords and no password reset.
 - Spans in `spans.dlq` are kept but there is no tool to inspect or replay them. Use the RabbitMQ management page.
+- The AI analysis was only run against a fake model so far. The real model runs, and any claim about how much a model helps, are still to be done.
 - Node.js only.
 
 ## Design notes

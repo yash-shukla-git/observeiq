@@ -36,9 +36,10 @@ function getColor(serviceName: string, isError: boolean, colorMap: Map<string, s
 
 interface Props {
     tree: SpanNode[];
+    highlightedSpanIds?: string[];
 }
 
-export default function WaterfallChart({ tree }: Props) {
+export default function WaterfallChart({ tree, highlightedSpanIds = [] }: Props) {
     const [selected, setSelected] = useState<SpanNode | null>(null);
 
     // Color map scoped to component instance
@@ -61,6 +62,7 @@ export default function WaterfallChart({ tree }: Props) {
                 const isError = node.status === 'error';
                 const color = getColor(node.service_name, isError, colorMap, indexRef);
                 const isSelected = selected?.span_id === node.span_id;
+                const isHighlighted = highlightedSpanIds.includes(node.span_id);
 
                 return (
                     <div
@@ -68,7 +70,9 @@ export default function WaterfallChart({ tree }: Props) {
                         className={`flex items-center h-9 px-3 rounded-lg cursor-pointer border border-transparent transition-all duration-150 ${
                             isSelected
                                 ? 'bg-zinc-800/60 border-zinc-700/40'
-                                : 'hover:bg-zinc-800/30'
+                                : isHighlighted
+                                    ? 'bg-indigo-500/10 border-indigo-400/40'
+                                    : 'hover:bg-zinc-800/30'
                         }`}
                         onClick={() => setSelected(isSelected ? null : node)}
                     >
