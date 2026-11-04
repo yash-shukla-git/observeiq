@@ -3,7 +3,7 @@ import TraceView from '@/app/components/TraceView';
 import Header from '@/app/components/Header';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { analyzeTrace, providerFromEnv } from '@observeiq/analysis';
+import { analyzeTrace, detectorDiagnosis } from '@observeiq/analysis';
 import type { AnalysisSummary } from '@/lib/analysisTypes';
 import { pool } from '@/lib/db';
 import { getSession } from '@/lib/session';
@@ -20,8 +20,8 @@ export default async function TracePage({ params }: Props) {
     if (!tree) notFound();
     const rootSpan = tree[0];
 
-    // The detectors are plain SQL and arithmetic, so they run on every page view. A failure here
-    // must not break the trace page, the panel just says the detectors could not run.
+    // The checks are plain SQL and arithmetic, so they run on every page view. A failure here
+    // must not break the trace page, the panel just says the checks could not run.
     let summary: AnalysisSummary | null = null;
     try {
         const analysis = await analyzeTrace(pool, traceId);
@@ -32,12 +32,12 @@ export default async function TracePage({ params }: Props) {
                     spanIds: f.spanIds, severity: f.severity, message: f.message,
                 })),
                 primaryIndex: analysis.primary ? analysis.findings.indexOf(analysis.primary) : null,
+                checks: detectorDiagnosis(analysis).checks,
             };
         }
     } catch (err) {
-        console.error('[dashboard] detectors failed:', err);
+        console.error('[dashboard] trace analysis failed:', err);
     }
-    const aiEnabled = providerFromEnv(process.env) !== null;
 
     return (
         <main className="min-h-screen w-full bg-[#111113] font-sans antialiased text-zinc-300">
@@ -61,7 +61,7 @@ export default async function TracePage({ params }: Props) {
                     <p className="text-xs text-zinc-600 font-mono mt-0.5">{traceId}</p>
                 </div>
 
-                <TraceView traceId={traceId} tree={tree} summary={summary} aiEnabled={aiEnabled} />
+                <TraceView tree={tree} summary={summary} />
             </div>
         </main>
     );

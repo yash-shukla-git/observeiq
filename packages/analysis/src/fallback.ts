@@ -29,8 +29,7 @@ const checksFor: Record<FindingKind, (service: string, operation: string) => str
     ],
 };
 
-// Plain answer built only from the detectors. Used when no model is configured,
-// when the model is unavailable, and as the baseline in the evaluation.
+// Plain answer built only from the detectors: a summary of the most likely cause and what to check next.
 export function detectorDiagnosis(analysis: TraceAnalysis): Diagnosis {
     const primary = analysis.primary;
     if (!primary) {

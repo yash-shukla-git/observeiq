@@ -11,4 +11,5 @@ export interface FindingView {
 export interface AnalysisSummary {
     findings: FindingView[];
     primaryIndex: number | null; // the finding the detectors think is the cause
+    checks: string[];            // what to check next, for the likely cause
 }
