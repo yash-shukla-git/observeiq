@@ -8,7 +8,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "pg": "^8.21.0"
+    "@google/genai": "^2.32.0",
+    "pg": "^8.21.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
