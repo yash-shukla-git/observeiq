@@ -32,7 +32,7 @@ export default async function Home() {
                     <div className="rounded-lg bg-[#18181b] border border-zinc-800/60 p-5 flex flex-col gap-1.5 shadow-md">
                         <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Total Traces</p>
                         <p className="text-4xl font-bold text-zinc-300 tabular-nums tracking-tight">{totalTraces}</p>
-                        <p className="text-[11px] text-zinc-600 font-medium">active traces</p>
+                        <p className="text-[11px] text-zinc-600 font-medium">latest 50 traces</p>
                     </div>
 
                     <div className={`rounded-lg bg-[#18181b] border p-5 flex flex-col gap-1.5 shadow-md transition-all ${
@@ -42,7 +42,7 @@ export default async function Home() {
                         <p className={`text-4xl font-bold tabular-nums tracking-tight ${isHighErrorRate ? 'text-rose-400' : 'text-emerald-400'}`}>
                             {errorRate}%
                         </p>
-                        <p className="text-[11px] text-zinc-600 font-medium">vs 1.2% target</p>
+                        <p className="text-[11px] text-zinc-600 font-medium">of the latest 50 traces</p>
                     </div>
 
                     <div className="rounded-lg bg-[#18181b] border border-zinc-800/60 p-5 flex flex-col gap-1.5 shadow-md">
@@ -50,7 +50,7 @@ export default async function Home() {
                         <p className="text-4xl font-bold text-zinc-300 tabular-nums tracking-tight">
                             {avgDuration}<span className="text-xl font-medium text-zinc-500 ml-0.5">ms</span>
                         </p>
-                        <p className="text-[11px] text-zinc-600 font-medium">across all services</p>
+                        <p className="text-[11px] text-zinc-600 font-medium">of the latest 50 traces</p>
                     </div>
                 </div>
 

@@ -1,6 +1,5 @@
 -- Migration: 001_create_spans_table.sql
--- Run this once against your PostgreSQL instance before starting the worker.
--- docker exec -i <postgres_container> psql -U postgres -d observeiq < migrations/001_create_spans_table.sql
+-- Applied by: npm run migrate (it runs every file in this folder once and records it).
 
 CREATE TABLE IF NOT EXISTS spans (
                                      id            BIGSERIAL PRIMARY KEY,

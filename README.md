@@ -116,6 +116,8 @@ Root `.env` (collector, worker, demo services, migrate script):
 | `COLLECTOR_URL` | Where the demo services and mock emitter send spans |
 | `INGEST_API_KEY` | If set, `/ingest` needs a matching `x-api-key` header. Empty means open |
 | `CORS_ORIGIN` | Browser origin allowed to call the collector. Default allows any |
+| `ORDER_PORT`, `INVENTORY_PORT`, `PAYMENT_PORT` | Ports of the demo services (3001, 3002, 3003) |
+| `ORDER_URL`, `INVENTORY_URL`, `PAYMENT_URL` | Where the demo services and `npm run eval` reach each other |
 | `ENABLE_FAULTS` | `true` lets the demo services accept `POST /__fault` (used by `npm run eval`). Never in production |
 
 Dashboard `apps/dashboard/.env.local`: `NEXT_PUBLIC_COLLECTOR_URL`, `DATABASE_URL`, `DATABASE_SSL`, `SESSION_SECRET`, `ALLOW_SIGNUP`. The dashboard needs `DATABASE_URL` because user accounts are stored in the same database.

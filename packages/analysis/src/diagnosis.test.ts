@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { defaultConfig } from './config';
-import { detectorDiagnosis } from './fallback';
+import { detectorDiagnosis } from './diagnosis';
 import { span } from './testSpans';
 import type { Finding, TraceAnalysis } from './types';
 

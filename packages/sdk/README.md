@@ -108,11 +108,14 @@ The monorepo contains:
 ```
 observeiq/
 ├── apps/
-│   ├── collector/     Express server — receives spans, pushes to RabbitMQ
-│   ├── worker/        Reads queue, writes to PostgreSQL
-│   └── dashboard/     Waterfall UI
+│   ├── collector/     Express server: validates spans, pushes to RabbitMQ, serves traces
+│   ├── worker/        Reads queue, writes to PostgreSQL, holds the SQL migrations
+│   ├── dashboard/     Waterfall UI, login, trace analysis panel
+│   └── demo-app/      order, inventory and payment services that use this SDK
 ├── packages/
-│   └── sdk/           This package
+│   ├── sdk/           This package
+│   └── analysis/      Rule-based trace analysis (detectors)
+├── scripts/           migrate, mock emitter, analyze, eval
 └── docker-compose.yml PostgreSQL + RabbitMQ
 ```
 
@@ -127,11 +130,10 @@ git clone https://github.com/yash-shukla-git/observeiq.git
 cd observeiq
 ```
 
-2. Install dependencies
+2. Install dependencies (once, from the repo root, it is an npm workspaces monorepo)
 
 ```bash
 npm install
-cd packages/sdk && npm install
 ```
 
 3. Start infrastructure
@@ -143,8 +145,7 @@ docker compose up -d
 4. Build the SDK
 
 ```bash
-cd packages/sdk
-npm run build
+npm run build:sdk
 ```
 
 5. Make your changes in `packages/sdk/src/`, rebuild, and verify spans appear in PostgreSQL.
