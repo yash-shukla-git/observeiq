@@ -3,7 +3,7 @@ import { config } from "dotenv";
 import path from "path";
 
 // Next only reads apps/dashboard/.env.local. Also read the repo's root .env for anything not set there
-// (for example GEMINI_API_KEY), so the key only has to be written once. Values already set are not replaced.
+// (for example DATABASE_URL), so a value only has to be written once. Values already set are not replaced.
 // The file is missing when the dashboard is deployed on its own, which is fine.
 config({ path: path.resolve(__dirname, "../../.env"), quiet: true });
 

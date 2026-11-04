@@ -1,10 +1,9 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
-import { analyzeTrace, buildEvidence, detectorDiagnosis } from '@observeiq/analysis';
+import { analyzeTrace, detectorDiagnosis } from '@observeiq/analysis';
 
 // npm run analyze -- <traceId>
 // npm run analyze -- --latest          analyse the newest trace
-// add --evidence to print the summary the model would receive
 const args = process.argv.slice(2);
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -18,7 +17,7 @@ async function main() {
         traceId = latest.rows[0]?.trace_id;
     }
     if (!traceId) {
-        console.error('Usage: npm run analyze -- <traceId> | --latest [--evidence]');
+        console.error('Usage: npm run analyze -- <traceId> | --latest');
         process.exitCode = 1;
         return;
     }
@@ -45,12 +44,8 @@ async function main() {
     }
 
     const diagnosis = detectorDiagnosis(analysis);
-    console.log(`\ndetector-only diagnosis: ${diagnosis.summary}`);
+    console.log(`\nlikely cause: ${diagnosis.summary}`);
     diagnosis.checks.forEach((c) => console.log(`  - ${c}`));
-
-    const { evidence, hash } = buildEvidence(analysis);
-    console.log(`\nevidence for the model: ${evidence.spans.length} spans, ${JSON.stringify(evidence).length} bytes, hash ${hash.slice(0, 12)}`);
-    if (args.includes('--evidence')) console.log(JSON.stringify(evidence, null, 2));
 }
 
 main()

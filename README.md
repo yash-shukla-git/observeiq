@@ -44,7 +44,7 @@ apps/
   dashboard/      Next.js app (waterfall chart, login)
   demo-app/       order, inventory and payment services that use the SDK
 packages/sdk/     @yashshukla/observeiq-node
-packages/analysis/  detectors and the optional model-backed explanation used by the dashboard
+packages/analysis/  the trace analysis checks (detectors) used by the dashboard
 scripts/          migrate.ts (SQL migrations), mock-emitter.ts (fake traces), analyze-cli.ts, eval/ (fault evaluation)
 docs/             design notes, evaluation results
 docker-compose.yml        local PostgreSQL and RabbitMQ
@@ -117,7 +117,6 @@ Root `.env` (collector, worker, demo services, migrate script):
 | `INGEST_API_KEY` | If set, `/ingest` needs a matching `x-api-key` header. Empty means open |
 | `CORS_ORIGIN` | Browser origin allowed to call the collector. Default allows any |
 | `ENABLE_FAULTS` | `true` lets the demo services accept `POST /__fault` (used by `npm run eval`). Never in production |
-| `GEMINI_API_KEY`, `GEMINI_MODEL`, `AI_PROVIDER`, `OLLAMA_*`, `AI_*` | Optional AI analysis, see below |
 
 Dashboard `apps/dashboard/.env.local`: `NEXT_PUBLIC_COLLECTOR_URL`, `DATABASE_URL`, `DATABASE_SSL`, `SESSION_SECRET`, `ALLOW_SIGNUP`. The dashboard needs `DATABASE_URL` because user accounts are stored in the same database.
 
@@ -150,56 +149,42 @@ More in [packages/sdk/README.md](./packages/sdk/README.md).
 
 A trace's duration is the time from the first span start to the last span end. Summing span durations would count nested spans twice.
 
-## AI Analysis
+## Trace analysis
 
-On a trace page, a side panel next to the waterfall looks for the likely cause of a slow or failing request and says what to check next. It has two parts:
+On a trace page, a side panel next to the waterfall looks for the likely cause of a slow or failing request and says what to check next. It is plain code (detectors), no model and no extra service. The detectors compare the trace with what is normal for each operation:
 
-1. **Detectors** (plain code, no model). They compare the trace with what is normal for each operation. Latency regression (p99 against a baseline window), error-rate spike, the same call repeated many times in one trace (N+1), a retry storm, and a slow call into another service. They run on every trace page view and cost nothing.
-2. **An optional model** that explains the detector findings. When you click "Analyze with AI", a compact summary of the trace (not the raw spans) goes to the model, which must answer in a fixed JSON format. Its answer is rejected if it cites a span that is not in the summary, or names a service or operation that does not match the span it cites. It gets one retry, then the detector answer is shown instead. The same happens if the model is down, slow or rate limited.
+| Detector | Rule |
+|---|---|
+| Latency regression | p99 of the recent window is at least 2x the baseline p99 and at least 50 ms higher (needs at least 20 spans in both windows) |
+| Error spike | at least 5 recent errors, a rate of at least 10% and at least 3x the baseline rate |
+| Repeated identical calls (N+1) | 5 or more sibling spans with the same parent, service and operation |
+| Retry storm | 3 or more such siblings and at least half of them failed |
+| Slow downstream call | a call into another service that is at least 2x its baseline p95 and at least 50 ms slower |
 
-```
-spans table -> detectors -> findings -> evidence summary (spans renamed S1, S2, ...)
-                                              |
-                      cache / rate limit / timeout -> model (Gemini or Ollama)
-                                              |
-                       validate -> retry once -> fallback to detector answer -> side panel (streamed stages)
-```
-
-Setup is optional. Without a key everything else works and the button is disabled. To use Gemini put `GEMINI_API_KEY` in `apps/dashboard/.env.local` (server side only, never in a `NEXT_PUBLIC_` variable) and run `npm run migrate` once for the `analysis_runs` table. The default model is `gemini-3.5-flash-lite`, change it with `GEMINI_MODEL`. `AI_MAX_CALLS_PER_MINUTE` and `AI_DAILY_LIMIT` cap the calls, set them under the limits shown for your project in Google AI Studio. Ollama works too (`AI_PROVIDER=ollama`, `OLLAMA_MODEL=...`).
-
-Keep in mind that Google's pricing page says content sent on the free tier may be used to improve their products. Only the abstracted summary leaves the server: renamed spans, a few allowed tags, shortened error text.
+They run on every trace page view and cost nothing. When several findings fire, the deepest one is picked as the likely cause, because a slow database query also makes the call that waits for it, and the request above it, look slow. Clicking a finding highlights its spans in the waterfall. The thresholds are in `packages/analysis/src/config.ts`.
 
 The detectors need a baseline older than the "recent" window (5 minutes by default), so a stack that was started a minute ago will only show the single-trace rules (repeated calls, a clearly dominant slow call).
 
-Try it from the terminal: `npm run analyze -- --latest` prints the findings for the newest trace, `--evidence` also prints what a model would receive.
+Try it from the terminal: `npm run analyze -- --latest` prints the findings for the newest trace.
 
 ### Evaluation
 
-The demo services can be put into known faults (`npm run eval` switches them on over `POST /__fault`): slow database queries, one query per item, a failing payment service, order retries, and a slow database combined with a short client timeout. The expected cause of each fault lives only in `scripts/eval/scenarios.ts`, never in the spans. Details of the method and its limits are in [docs/ai-analysis-design.md](./docs/ai-analysis-design.md).
+The demo services can be put into known faults (`npm run eval` switches them on over `POST /__fault`): slow database queries, one query per item, a failing payment service, order retries, and a slow database combined with a short client timeout. The expected cause of each fault lives only in `scripts/eval/scenarios.ts`, never in the spans. The thresholds were tuned on one set of fault sizes (variant a) and the numbers below use different sizes (variant b), run after the thresholds were frozen.
 
-Real runs on the demo faults, with fault sizes the detectors and the prompt were not tuned on (variant b), 10 traces per scenario, one run per mode, model `gemini-3.5-flash-lite`. Commands: `npm run eval -- --mode detector|llm|llm-only --variant b --traces 10`. Result files are in `docs/eval-results/` (commit `158413f`).
+Real run, 10 traces per scenario: `npm run eval -- --variant b --traces 10`. The result file is `docs/eval-results/2026-11-02T14-24-detector-b.json` (commit `158413f`, made with an older version of the command that also had a `--mode detector` option). Culprit means the right service and operation. Exact means the right kind of problem for the same place.
 
-Each cell is "culprit found / exact". Culprit means the right service and operation. Exact means the right kind of problem for the same place.
+| Scenario | Culprit found | Exact |
+|---|---|---|
+| slow_db | 100% | 100% |
+| n_plus_one | 100% | 100% |
+| failing_downstream | 100% | 100% |
+| retry_storm | 100% | 100% |
+| timeout_cascade | 100% | 100% |
+| healthy (no fault), falsely flagged | 0% | |
 
-| Scenario | Detectors only | Detectors + model | Model only (no findings) |
-|---|---|---|---|
-| slow_db | 100% / 100% | 100% / 100% | 100% / 50% |
-| n_plus_one | 100% / 100% | 100% / 100% | 100% / 100% |
-| failing_downstream | 100% / 100% | 100% / 70% | 100% / 40% |
-| retry_storm | 100% / 100% | 100% / 20% | 80% / 40% |
-| timeout_cascade | 100% / 100% | 100% / 100% | 90% / 0% |
-| **all 5 fault scenarios (50 traces)** | **100% / 100%** | **100% / 78%** | **94% / 46%** |
-| healthy, falsely flagged (10 traces) | 0% | 0% | 0% |
+Limits: five synthetic faults plus a healthy control, 10 traces each, one run. The detectors were built around these kinds of faults, so this shows they work on them, not that they catch every kind of problem in real traffic. Details of the method are in [docs/trace-analysis-design.md](./docs/trace-analysis-design.md).
 
-What the numbers show, and what they do not:
-
-- **The detectors do the diagnosing.** They found the right place in every fault trace and flagged nothing in the healthy ones.
-- **The model did not improve accuracy.** With the findings it found the same place (100%), but its exact score is lower (78%) because it labelled some incidents differently from the expected label. Examples: it called a failing payment service a "slow downstream call" 3 times out of 10, and in the retry scenario it answered "retry storm" about the payment service, while the expected pairing is retry storm for the order service (the retries) or error spike for the payment service. Some of these labels overlap (a slow database call is both a slow downstream call and a latency regression), so the exact column understates how reasonable the answers are. The scoring was not changed after the final runs.
-- **Without the detector findings it is worse and less reliable.** 94% culprit, 46% exact, 3 of 60 calls got no answer within the 60 s evaluation timeout, and the 90th percentile latency was 30 s.
-- **The model's answers were well formed.** All 60 calls in the combined mode were accepted on the first try, none needed the retry, none were rejected twice. Median latency 2.0 s, 90th percentile 6.6 s, 2 calls above 20 s (these would have fallen back to the detector answer with the product's 20 s timeout).
-- **What the model adds is the explanation.** Its written summary named the right service and operation in 98% of fault traces (the detector's template text trivially does so in 100%), and it suggests what to check next. How good or useful that text is for a person is not measured here. No second model was used as a judge.
-
-Limits of this evaluation: five synthetic faults plus a healthy control, 10 traces each, one run per mode, one model, so differences of a few traces are noise. It says nothing about other models or about real traffic. Two things were changed after the first model runs on the tuning variant, before the final runs: the rule that checks whether the explanation names the cause was made less literal (it wanted the exact text `db.query`, the model wrote "database queries"), and for the N+1 scenario both the repeated query and the calling operation count as the right place, because models often pointed at the calling operation.
+An earlier version also sent a short summary of each trace to a language model to write an explanation. I evaluated it on the same faults and it did not improve the diagnosis, so I removed it. The result and the reasons are in the design note.
 
 ## Tests and CI
 
@@ -209,7 +194,7 @@ npm run typecheck    # tsc for every package
 npm run lint --workspace=dashboard
 ```
 
-The tests cover the tree builder, span validation, the worker's decision on which database errors are retried, the session token, the detectors, the evidence builder, answer validation, the model orchestration with a fake provider (retry, fallback, cache, rate limit, timeout) and the stream parser. No test calls a real model. GitHub Actions (`.github/workflows/ci.yml`) runs install, SDK build, typecheck, lint, tests, the dashboard build, and builds both Docker images. There is no automated end-to-end test of the whole pipeline yet, I check that by hand with the steps above.
+The tests cover the tree builder, span validation, the worker's decision on which database errors are retried, the session token and the detectors. GitHub Actions (`.github/workflows/ci.yml`) runs install, SDK build, typecheck, lint, tests, the dashboard build, and builds both Docker images. There is no automated end-to-end test of the whole pipeline yet, I check that by hand with the steps above.
 
 ## Deploying
 
@@ -228,8 +213,7 @@ Nothing is deployed right now. What the repo gives you:
 - The read endpoints (`/traces`) are open. Only `/ingest` can be protected with a key.
 - Login has no lockout after repeated wrong passwords and no password reset.
 - Spans in `spans.dlq` are kept but there is no tool to inspect or replay them. Use the RabbitMQ management page.
-- The model comparison is one run per mode on synthetic faults with one model. It is not evidence about other models or real traffic.
-- Model calls can be slow: the median was about 2 s but some calls took over 20 s. Those fall back to the detector answer after the timeout (`AI_TIMEOUT_MS`).
+- The detectors only know the five kinds of problems listed above, and were evaluated on synthetic faults.
 - Node.js only.
 
 ## Design notes

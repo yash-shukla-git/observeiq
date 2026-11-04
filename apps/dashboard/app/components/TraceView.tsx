@@ -7,14 +7,12 @@ import AnalysisPanel from './AnalysisPanel';
 import WaterfallChart from './WaterfallChart';
 
 interface Props {
-    traceId: string;
     tree: SpanNode[];
     summary: AnalysisSummary | null;
-    aiEnabled: boolean;
 }
 
-// Waterfall on the left, analysis on the right. Clicking a finding or a piece of evidence highlights its spans.
-export default function TraceView({ traceId, tree, summary, aiEnabled }: Props) {
+// Waterfall on the left, trace analysis on the right. Clicking a finding highlights its spans.
+export default function TraceView({ tree, summary }: Props) {
     const [highlighted, setHighlighted] = useState<string[]>([]);
 
     return (
@@ -22,7 +20,7 @@ export default function TraceView({ traceId, tree, summary, aiEnabled }: Props) 
             <div className="rounded-xl border border-zinc-800/60 bg-[#18181b] p-6">
                 <WaterfallChart tree={tree} highlightedSpanIds={highlighted} />
             </div>
-            <AnalysisPanel traceId={traceId} summary={summary} aiEnabled={aiEnabled} onHighlight={setHighlighted} />
+            <AnalysisPanel summary={summary} onHighlight={setHighlighted} />
         </div>
     );
 }
